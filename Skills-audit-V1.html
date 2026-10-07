@@ -735,17 +735,30 @@ function buildReport(){
     <div class="rpt-meta"><span>Generated <b>${date}</b></span><span>Rated <b>${full}</b>/${all.length}</span><span>Most valuable listed <b>${state.valuable.length}</b></span><span>Potential listed <b>${state.potential.length}</b></span></div>
     <hr>`;
 
-  // A. profile by category
-  h+=`<h2><span class="n">A.</span> Skills profile by category</h2>
-    <p class="rpt-note">Skill level: 1 = no skill, 5 = expert. Enjoyment: 1 = not at all, 5 = I really love using this skill. Coefficient = skill level × enjoyment (maximum 25). Categories are ordered by highest average coefficient; averages count only the skills you have rated.</p>
+  // A. all skills with ratings
+  h+=`<h2><span class="n">A.</span> Rate your skills</h2>
+    <p class="rpt-note">Skill level: 1 = no skill, 5 = expert. Enjoyment: 1 = not at all, 5 = I really love using this skill. Coefficient = skill level × enjoyment (maximum 25).</p>`;
+  catsInUse().forEach(cat=>{
+    const items=all.filter(s=>s.cat===cat);if(!items.length)return;
+    h+=`<div class="cl-blk"><h3>${escHtml(cat)}</h3><table class="sk"><tr><th>Skill</th><th class="num">Skill level<br>1–5</th><th class="num">Enjoyment<br>1–5</th><th class="num">Coefficient</th></tr>`;
+    items.forEach(s=>{
+      const x=getR(s.id),c=coef(s.id);
+      h+=`<tr><td>${escHtml(s.name)}${s.custom?" <i>(added)</i>":""}</td><td class="num${x.l?"":" dim"}">${num(x.l)}</td><td class="num${x.e?"":" dim"}">${num(x.e)}</td><td class="num coefv${c>=16?" hi":""}${c?"":" dim"}">${c||"–"}</td></tr>`;
+    });
+    h+=`</table></div>`;
+  });
+
+  // B. profile by category
+  h+=`<h2><span class="n">B.</span> Skills profile by category</h2>
+    <p class="rpt-note">Categories are ordered by highest average coefficient. Averages count only the skills you have rated.</p>
     <table class="sk"><tr><th>Category</th><th class="num">Skill level<br>(avg)</th><th class="num">Enjoyment<br>(avg)</th><th class="num">Coefficient<br>(avg)</th><th class="num">Rated</th></tr>`;
   profileRows().forEach(p=>{
     h+=`<tr><td class="skn">${escHtml(p.cat)}</td><td class="num">${p.lAvg==null?"–":p.lAvg.toFixed(1)}</td><td class="num">${p.eAvg==null?"–":p.eAvg.toFixed(1)}</td><td class="num coefv">${p.cAvg==null?"–":p.cAvg.toFixed(1)}</td><td class="num">${p.cN} / ${p.total}</td></tr>`;
   });
   h+=`</table>`;
 
-  // B. most valuable skills
-  h+=`<h2><span class="n">B.</span> My most valuable skills</h2>`;
+  // C. most valuable skills
+  h+=`<h2><span class="n">C.</span> My most valuable skills</h2>`;
   if(!state.valuable.length)h+=`<p class="rpt-note">No skills listed.</p>`;
   else{
     h+=`<table class="sk"><tr><th style="width:34px">Rank</th><th style="width:17%">Category</th><th style="width:19%">Skill</th><th class="num">Level × enjoyment</th><th class="num">Using it now<br>0–10</th><th>What can I do to use more of this skill in my current work, or is there a role or career that would let me use it more often?</th></tr>`;
@@ -756,8 +769,8 @@ function buildReport(){
     h+=`</table>`;
   }
 
-  // C. potential skills
-  h+=`<h2><span class="n">C.</span> My potential skills</h2>`;
+  // D. potential skills
+  h+=`<h2><span class="n">D.</span> My potential skills</h2>`;
   if(!state.potential.length)h+=`<p class="rpt-note">No skills listed.</p>`;
   else{
     h+=`<table class="sk"><tr><th style="width:34px">Rank</th><th style="width:15%">Category</th><th style="width:17%">Skill</th><th class="num">Skill level · enjoyment</th><th>Where am I using this skill at the moment?</th><th>What would I need to do to develop this skill further?</th></tr>`;
@@ -768,8 +781,8 @@ function buildReport(){
     h+=`</table>`;
   }
 
-  // D. insights
-  h+=`<h2><span class="n">D.</span> Insights</h2>`;
+  // E. insights
+  h+=`<h2><span class="n">E.</span> Insights</h2>`;
   INSIGHTS.forEach((q,i)=>{
     const a=(state.insights["q"+i]||"").trim();
     h+=`<div class="qa"><p class="q">${i+1}. ${escHtml(q)}</p><p class="a${a?"":" empty"}">${a?escHtml(a):"(not answered)"}</p></div>`;
