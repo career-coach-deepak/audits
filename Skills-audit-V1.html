@@ -1,0 +1,798 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Review Your Skills</title>
+<style>
+
+  :root{
+    --bg:#e9ebee;--panel:#ffffff;--ink:#1c2230;--muted:#69707d;
+    --line:#d8dce2;--line-strong:#c4cad3;
+    --accent:#5a4b9c;--accent-soft:#ece9f6;
+    --energize:#0f7a67;--energize-soft:#e4f1ee;
+    --neutral:#8a93a2;--neutral-soft:#eef0f3;
+    --drain:#b5564e;--drain-soft:#f6e9e8;
+    --shadow:0 1px 2px rgba(20,30,50,.06),0 4px 14px rgba(20,30,50,.06);
+    --radius:10px;
+    --sans:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    --serif:"Iowan Old Style","Palatino Linotype",Palatino,Georgia,"Times New Roman",serif;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0}
+  body{font-family:var(--sans);color:var(--ink);background:var(--bg);line-height:1.45;-webkit-font-smoothing:antialiased}
+  .wrap{max-width:1000px;margin:0 auto;padding:22px 18px 90px}
+
+  header.top{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:14px;margin-bottom:12px}
+  .title-block .eyebrow{font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);margin:0 0 4px}
+  .title-block h1{font-family:var(--serif);font-weight:600;font-size:29px;line-height:1.1;margin:0}
+  .toolbar{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+  .btn{font:inherit;font-size:13px;border:1px solid var(--line-strong);background:var(--panel);color:var(--ink);padding:7px 12px;border-radius:8px;cursor:pointer;white-space:nowrap}
+  .btn:hover{border-color:#9aa2ae}
+  .btn.danger:hover{border-color:#c9524a;color:#b4433c}
+  .save-dot{font-size:12px;color:var(--muted);display:inline-flex;align-items:center;gap:6px}
+  .save-dot b{width:7px;height:7px;border-radius:50%;background:var(--accent);display:inline-block}
+
+  details.guide{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);margin:12px 0;box-shadow:var(--shadow)}
+  details.guide>summary{cursor:pointer;padding:12px 16px;font-weight:600;font-size:13.5px;list-style:none;color:#2a3140}
+  details.guide>summary::-webkit-details-marker{display:none}
+  details.guide>summary::before{content:"›";display:inline-block;margin-right:8px;transition:transform .15s;color:var(--muted)}
+  details.guide[open]>summary::before{transform:rotate(90deg)}
+  .guide-body{padding:0 16px 14px;font-size:13px;color:#3a414f}
+  .guide-body p{margin:8px 0}.guide-body ul{margin:8px 0;padding-left:20px}.guide-body li{margin:4px 0}
+  .guide-body .quote{font-style:italic;color:#2a3140;border-left:3px solid var(--accent);padding-left:12px;margin:10px 0}
+  .scale-row{display:flex;gap:10px;flex-wrap:wrap;margin-top:8px}
+  .scale-pill{font-size:12px;padding:6px 10px;border-radius:8px;border:1px solid var(--line)}
+  .scale-pill.e{background:var(--energize-soft);border-color:#bcdcd4}
+  .scale-pill.n{background:var(--neutral-soft)}
+  .scale-pill.d{background:var(--drain-soft);border-color:#e6c6c3}
+
+  .identity{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);padding:14px 16px;margin-bottom:16px;display:grid;grid-template-columns:1fr 1fr;gap:14px}
+  @media(max-width:620px){.identity{grid-template-columns:1fr}}
+  .identity .field label{display:block;font-size:11px;letter-spacing:.04em;text-transform:uppercase;color:var(--muted);margin-bottom:5px}
+  .identity .field input{width:100%;font:inherit;font-size:14px;padding:9px 12px;border:1px solid var(--line-strong);border-radius:8px;background:#fff}
+  .identity-note{grid-column:1/-1;margin:0;font-size:12px;color:var(--muted)}
+
+  h2.sec{font-family:var(--serif);font-weight:600;font-size:21px;margin:26px 0 3px}
+  p.sec-sub{color:var(--muted);font-size:13px;margin:0 0 6px}
+  .bar{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin:8px 0 14px}
+  .chip{font-size:12px;padding:5px 10px;border-radius:999px;border:1px solid var(--line);background:var(--panel);color:var(--muted)}
+  .chip b{color:var(--ink)}
+
+  /* strength rating rows */
+  .srow{background:var(--panel);border:1px solid var(--line);border-radius:10px;box-shadow:var(--shadow);padding:11px 13px;margin-bottom:9px;display:grid;grid-template-columns:1fr auto;gap:10px 14px;align-items:center}
+  @media(max-width:620px){.srow{grid-template-columns:1fr}}
+  .srow .s-main{min-width:0}
+  .srow .s-name{font-weight:600;font-size:14.5px}
+  .srow .s-name .n{color:var(--accent);font-variant-numeric:tabular-nums;margin-right:7px;font-size:12.5px}
+  .srow .s-def{font-size:12.5px;color:#4a515e;margin-top:3px}
+  .srow.rated-5{border-left:3px solid var(--energize)}
+  .srow.rated-3{border-left:3px solid var(--neutral)}
+  .srow.rated-1{border-left:3px solid var(--drain)}
+
+  .seg{display:inline-flex;border:1px solid var(--line-strong);border-radius:8px;overflow:hidden;flex:none}
+  .seg button{font:inherit;font-size:12px;padding:7px 11px;border:none;background:#fff;color:var(--muted);cursor:pointer;border-left:1px solid var(--line);white-space:nowrap}
+  .seg button:first-child{border-left:none}
+  .seg button .num{font-weight:700;font-variant-numeric:tabular-nums}
+  .seg button.on[data-v="5"]{background:var(--energize);color:#fff}
+  .seg button.on[data-v="3"]{background:var(--neutral);color:#fff}
+  .seg button.on[data-v="1"]{background:var(--drain);color:#fff}
+
+  /* profile */
+  .profile-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+  @media(max-width:720px){.profile-grid{grid-template-columns:1fr}}
+  .cluster{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);padding:14px 15px}
+  .cluster h3{margin:0 0 2px;font-size:15px;font-family:var(--serif);font-weight:600}
+  .cluster .cdesc{font-size:11.5px;color:var(--muted);margin:0 0 10px;line-height:1.4}
+  .cluster .citem{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:5px 0;border-top:1px solid #eef0f2;font-size:13px}
+  .cluster .citem:first-of-type{border-top:none}
+  .cluster .citem .nm{min-width:0}
+  .badge{font-size:11px;font-weight:700;width:24px;height:22px;border-radius:6px;display:inline-flex;align-items:center;justify-content:center;flex:none;background:var(--neutral-soft);color:var(--muted)}
+  .badge.b5{background:var(--energize-soft);color:var(--energize)}
+  .badge.b3{background:var(--neutral-soft);color:#5c6471}
+  .badge.b1{background:var(--drain-soft);color:var(--drain)}
+  .badge.b0{background:#f4f5f7;color:#b6bcc6}
+  .cluster .csum{font-size:11.5px;color:var(--muted);margin-top:9px;padding-top:9px;border-top:1px solid #eef0f2}
+  .cluster .csum b{color:var(--energize)}
+
+  /* reflect */
+  section.block{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);margin-top:20px;padding:18px}
+  section.block h2{font-family:var(--serif);font-weight:600;font-size:20px;margin:0 0 3px}
+  section.block .sub{color:var(--muted);font-size:13px;margin:0 0 12px}
+  .suggest{font-size:12.5px;color:var(--muted);margin:0 0 7px}
+  .sugg-chips{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:10px}
+  .sugg{font:inherit;font-size:12px;border:1px dashed var(--line-strong);background:#fff;color:var(--ink);padding:5px 10px;border-radius:999px;cursor:pointer}
+  .sugg:hover{border-color:var(--accent);background:var(--accent-soft)}
+  .sugg.energize{border-color:#bcdcd4}
+  .sugg.drain{border-color:#e6c6c3}
+  .add-sel{font:inherit;font-size:13px;padding:7px 10px;border:1px solid var(--line-strong);border-radius:8px;background:#fff;margin-bottom:12px;max-width:320px;width:100%}
+
+  .ritem{border:1px solid var(--line);border-radius:10px;padding:12px;margin-bottom:10px;background:#fff}
+  .ritem-head{display:flex;align-items:flex-start;gap:10px}
+  .ritem-head .rn{font-weight:600;font-size:14.5px}
+  .ritem-head .rd{font-size:12.5px;color:#4a515e;margin-top:2px}
+  .ritem-head .rm{margin-left:auto;border:1px solid var(--line);background:#fff;border-radius:6px;width:26px;height:26px;cursor:pointer;color:var(--muted);flex:none}
+  .ritem-head .rm:hover{border-color:#c9524a;color:#b4433c}
+  .ritem .ruse{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin:11px 0 10px}
+  .ritem .ruse .ul{font-size:12px;font-weight:600;color:#2a3140}
+  .ritem textarea{width:100%;font:inherit;font-size:13.5px;padding:9px 11px;border:1px solid var(--line-strong);border-radius:8px;resize:vertical;min-height:52px;background:#fff;line-height:1.5}
+  .ritem textarea:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 2px var(--accent-soft)}
+  .r-empty{color:var(--muted);font-size:13px;border:1px dashed var(--line);border-radius:8px;padding:14px;text-align:center}
+
+  .rq{margin-bottom:14px}.rq:last-child{margin-bottom:0}
+  .rq label{display:block;font-size:13.5px;font-weight:600;margin-bottom:6px;color:#2a3140}
+  .rq label .num{color:var(--accent);margin-right:4px}
+  .rq textarea{width:100%;font:inherit;font-size:13.5px;padding:9px 11px;border:1px solid var(--line-strong);border-radius:8px;resize:vertical;min-height:60px;background:#fff;line-height:1.5}
+  .rq textarea:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 2px var(--accent-soft)}
+
+  footer{margin-top:26px;color:var(--muted);font-size:12px;text-align:center}
+
+  /* ---------- printable report ---------- */
+  #report{display:none}
+  @media print{
+    @page{margin:16mm 15mm}
+    html,body{background:#fff}
+    .wrap{display:none!important}
+    #report{display:block!important;color:#15171c;font-family:var(--serif);font-size:10.5pt;line-height:1.5}
+    #report .rpt-title{font-size:22pt;font-weight:600;margin:0 0 2px}
+    #report .rpt-sub{font-family:var(--sans);font-size:9.5pt;color:#555;margin:0}
+    #report .rpt-person{font-family:var(--sans);font-size:11pt;color:#15171c;font-weight:600;margin:8px 0 0}
+    #report .rpt-meta{font-family:var(--sans);font-size:9pt;color:#555;margin:8px 0 0}
+    #report .rpt-meta span{display:inline-block;margin-right:22px}#report .rpt-meta span b{color:#15171c}
+    #report hr{border:none;border-top:1.5px solid #15171c;margin:12px 0 16px}
+    #report h2{font-size:14pt;font-weight:600;margin:20px 0 6px;padding-bottom:5px;border-bottom:1px solid #c9ccd2;break-after:avoid}
+    #report h2 .n{color:#5a4b9c}
+    #report h3{font-family:var(--sans);font-size:10.5pt;margin:12px 0 4px;break-after:avoid}
+    #report table{width:100%;border-collapse:collapse;font-size:9.5pt;margin:4px 0 2px}
+    #report td,#report th{border:1px solid #cfd3da;padding:5px 8px;vertical-align:top;text-align:left}
+    #report th{background:#efecf6;font-family:var(--sans);font-size:8.5pt;font-weight:700}
+    #report tr{break-inside:avoid}
+    #report .rpt-note{font-family:var(--sans);font-size:9pt;color:#555;margin:2px 0 6px}
+    #report table.rate-tbl td.rk{font-size:11pt;line-height:1}
+    #report table.rate-tbl td.rk.d1{color:#b5564e}
+    #report table.rate-tbl td.rk.n3{color:#6b7280}
+    #report table.rate-tbl td.rk.e5{color:#0f7a67}
+    #report table.rate-tbl th.rh{text-align:center;width:58px}
+    #report table.rate-tbl td.c{width:auto}
+    #report table.rate-tbl td.rk{width:58px}
+    #report table.rate-tbl td.sn{width:21%}
+    #report td.sn{font-weight:600;width:24%}
+    #report td.sd{font-size:9pt;color:#39414f}
+    #report td.c{text-align:center;width:46px;font-weight:700}
+    #report td.c.e5{color:#0f7a67}#report td.c.d1{color:#b5564e}
+    #report .cl-blk{break-inside:avoid;margin-bottom:8px}
+    #report tr.avg td{font-weight:700;background:#efecf6;border-top:2px solid #b7add6}
+    #report .qa{break-inside:avoid;margin:8px 0}
+    #report .qa .q{font-family:var(--sans);font-weight:600;font-size:9pt;color:#39414f;margin:0 0 1px}
+    #report .qa .a{white-space:pre-wrap;font-size:10.5pt;margin:0}
+    #report .qa .a.empty{color:#9aa1ab;font-style:italic;font-family:var(--sans);font-size:9pt}
+    #report .rpt-foot{font-family:var(--sans);font-size:8pt;color:#888;margin-top:22px;border-top:1px solid #d8dce2;padding-top:8px}
+  }
+
+
+  /* ---------- skills audit additions (screen) ---------- */
+  .fbar{display:flex;flex-wrap:wrap;gap:8px 12px;align-items:center;margin:0 0 12px}
+  .fbar input[type=search]{flex:1 1 220px;font:inherit;font-size:13.5px;padding:8px 11px;border:1px solid var(--line-strong);border-radius:8px;background:#fff}
+  .fbar input[type=search]:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 2px var(--accent-soft)}
+  .fbar label.chk{font-size:12.5px;color:var(--muted);display:inline-flex;gap:6px;align-items:center;cursor:pointer}
+
+  details.cat{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);margin-bottom:10px}
+  details.cat>summary{cursor:pointer;list-style:none;padding:12px 15px;display:flex;flex-wrap:wrap;gap:3px 14px;align-items:baseline;justify-content:space-between}
+  details.cat>summary::-webkit-details-marker{display:none}
+  details.cat>summary:focus-visible{outline:2px solid var(--accent);outline-offset:-2px;border-radius:var(--radius)}
+  .cat-name{font-family:var(--serif);font-weight:600;font-size:16px}
+  .cat-name::before{content:"›";display:inline-block;margin-right:9px;color:var(--muted);transition:transform .15s}
+  details.cat[open] .cat-name::before{transform:rotate(90deg)}
+  .cat-meta{font-size:12px;color:var(--muted)}
+  .cat-body{padding:0 15px 6px}
+
+  .skrow{display:grid;grid-template-columns:minmax(0,1fr) auto 46px;gap:8px 18px;align-items:center;padding:10px 0;border-top:1px solid #eef0f2}
+  .skrow .sk-name{font-size:14px;font-weight:500;min-width:0}
+  .skrow .sk-add{font-size:11px;color:var(--muted);margin-left:6px}
+  .skrow .sk-del{font:inherit;font-size:11.5px;color:var(--muted);background:none;border:none;cursor:pointer;margin-left:8px;padding:0;text-decoration:underline}
+  .skrow .sk-del:hover{color:#b4433c}
+  .pot{font-size:10.5px;background:var(--accent-soft);color:var(--accent);border-radius:999px;padding:2px 8px;margin-left:8px;font-weight:600;white-space:nowrap}
+  .pot[hidden]{display:none}
+  .ctls{display:flex;gap:14px;flex-wrap:wrap}
+  .ctl{display:flex;flex-direction:column;gap:3px}
+  .ctl .cl{font-size:10.5px;color:var(--muted)}
+  .seg5{display:inline-flex;border:1px solid var(--line-strong);border-radius:8px;overflow:hidden}
+  .seg5 button{font:inherit;font-size:12.5px;font-weight:600;width:32px;height:30px;border:none;border-left:1px solid var(--line);background:#fff;color:var(--muted);cursor:pointer;font-variant-numeric:tabular-nums}
+  .seg5 button:first-child{border-left:none}
+  .seg5 button:hover{background:#f3f4f7}
+  .seg5 button:focus-visible{outline:2px solid var(--accent);outline-offset:-2px}
+  .seg5[data-kind="l"] button.on{background:var(--accent);color:#fff}
+  .seg5[data-kind="e"] button.on{background:var(--energize);color:#fff}
+  .coef{font-size:13px;font-weight:700;height:30px;border-radius:7px;display:inline-flex;align-items:center;justify-content:center;font-variant-numeric:tabular-nums}
+  .coef.c0{background:#f4f5f7;color:#b6bcc6}
+  .coef.c1{background:var(--neutral-soft);color:#5c6471}
+  .coef.c2{background:var(--accent-soft);color:var(--accent)}
+  .coef.c3{background:var(--energize-soft);color:var(--energize)}
+  @media(max-width:720px){
+    .skrow{grid-template-columns:minmax(0,1fr) 46px}
+    .skrow .coef{grid-row:1;grid-column:2}
+    .skrow .ctls{grid-column:1/-1}
+  }
+
+  .addskill{background:var(--panel);border:1px dashed var(--line-strong);border-radius:var(--radius);padding:14px 15px;margin-top:14px}
+  .addskill h3{margin:0 0 3px;font-family:var(--serif);font-size:15.5px;font-weight:600}
+  .addskill p{margin:0 0 10px;font-size:12.5px;color:var(--muted)}
+  .addskill .arow{display:flex;flex-wrap:wrap;gap:8px}
+  .addskill select,.addskill input{font:inherit;font-size:13.5px;padding:8px 11px;border:1px solid var(--line-strong);border-radius:8px;background:#fff}
+  .addskill input{flex:1 1 220px}
+  .addskill input:focus,.addskill select:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 2px var(--accent-soft)}
+  .btn.primary{background:var(--accent);border-color:var(--accent);color:#fff}
+  .btn.primary:hover{background:#4b3e86;border-color:#4b3e86}
+
+  .tablewrap{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);overflow-x:auto}
+  .ptable{width:100%;border-collapse:collapse;font-size:13px;min-width:560px}
+  .ptable th{text-align:left;font-size:11.5px;color:var(--muted);font-weight:600;padding:9px 12px;border-bottom:1px solid var(--line);white-space:nowrap}
+  .ptable td{padding:9px 12px;border-top:1px solid #eef0f2;vertical-align:middle}
+  .ptable tr:first-child td{border-top:none}
+  .ptable td.cn{font-weight:500}
+  .ptable .na{color:#b6bcc6}
+  .mt{display:inline-flex;align-items:center;gap:8px;font-variant-numeric:tabular-nums}
+  .mt b{min-width:26px;font-weight:700}
+  .meter{display:inline-block;width:78px;height:6px;border-radius:3px;background:#eceef2;overflow:hidden}
+  .meter i{display:block;height:100%}
+  .meter.l i{background:var(--accent)}
+  .meter.e i{background:var(--energize)}
+  .meter.c i{background:#3b5b8c}
+
+  .ritem-head .rk{width:26px;height:26px;border-radius:50%;background:var(--accent-soft);color:var(--accent);font-weight:700;font-size:12.5px;display:inline-flex;align-items:center;justify-content:center;flex:none}
+  .ritem-head .rs{font-size:12px;color:var(--muted);margin-top:2px}
+  .ritem-head .acts{margin-left:auto;display:flex;gap:4px;flex:none}
+  .ritem-head .acts button{border:1px solid var(--line);background:#fff;border-radius:6px;width:26px;height:26px;cursor:pointer;color:var(--muted);margin-left:0}
+  .ritem-head .acts button:hover:not(:disabled){border-color:var(--accent);color:var(--accent)}
+  .ritem-head .acts button.rm:hover{border-color:#c9524a;color:#b4433c}
+  .ritem-head .acts button:disabled{opacity:.35;cursor:default}
+  .ritem .ruse input[type=range]{accent-color:var(--accent);width:190px}
+  .ritem .ruse .uv{font-variant-numeric:tabular-nums;font-size:13px;font-weight:700;min-width:72px}
+  .ritem .ruse.unset .uv{color:var(--muted);font-weight:400}
+  .ritem .ruse.unset input{opacity:.55}
+  .ritem .ruse .clr{font:inherit;font-size:12px;color:var(--muted);background:none;border:none;text-decoration:underline;cursor:pointer;padding:0}
+  .ritem .rq{margin:0 0 10px}
+  .ritem .rq:last-child{margin-bottom:0}
+  .ritem .rq label{font-size:12.5px;margin-bottom:4px}
+  .ritem .rq textarea{min-height:52px}
+
+  @media print{
+    #report table.sk td.num,#report table.sk th.num{text-align:center;width:66px;font-variant-numeric:tabular-nums}
+    #report table.sk td.skn{font-weight:600}
+    #report table.sk td.pre{white-space:pre-wrap;font-size:9pt;color:#39414f}
+    #report table.sk td.hi{color:#0f7a67;font-weight:700}
+    #report table.sk td.coefv{font-weight:700}
+    #report table.sk td.dim{color:#9aa1ab}
+    #report .cl-blk h3{margin-top:10px}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="top">
+    <div class="title-block">
+      <p class="eyebrow">Career jigsaw · exercise</p>
+      <h1>Review your skills</h1>
+    </div>
+    <div class="toolbar">
+      <span class="save-dot" id="saveDot"><b></b> Saved</span>
+      <button class="btn" id="printBtn">Print / PDF</button>
+      <button class="btn" id="exportBtn">Export backup</button>
+      <button class="btn" id="importBtn">Import</button>
+      <input type="file" id="importFile" accept="application/json" hidden>
+      <button class="btn danger" id="resetBtn">Reset</button>
+    </div>
+  </header>
+
+  <details class="guide">
+    <summary>What this exercise is &amp; how to rate</summary>
+    <div class="guide-body">
+      <p><b>Objectives:</b> identify your most valuable skills, identify your potential skills, and gain insight into how to leverage the first and develop the second.</p>
+      <p>Go through the list and rate every skill twice:</p>
+      <div class="scale-row">
+        <span class="scale-pill e"><b>Skill level</b> — 1 = no skill, 5 = expert</span>
+        <span class="scale-pill n"><b>Enjoyment</b> — 1 = not at all, 5 = I really love using this skill</span>
+      </div>
+      <p>Once both are set you'll see a <b>skill coefficient</b>: skill level × enjoyment (maximum 25). It helps you spot your <b>most valuable skills</b>, the ones you are good at and enjoy.</p>
+      <p>Skills where enjoyment is <b>4 or 5</b> but skill level is <b>3 or lower</b> are your <b>potential skills</b>. With focused development they could become real strengths. If a skill is missing from the list, add it at the end of section 1.</p>
+    </div>
+  </details>
+
+  <div class="identity">
+    <div class="field"><label for="pName">Name</label><input type="text" id="pName" placeholder="Full name" autocomplete="name"></div>
+    <div class="field"><label for="pEmail">Email</label><input type="email" id="pEmail" placeholder="name@example.com" autocomplete="email"></div>
+    <p class="identity-note">Used to label the report and the saved PDF filename. Everything stays on this device.</p>
+  </div>
+
+  <h2 class="sec">1 · Rate your skills</h2>
+  <p class="sec-sub">How good are you at each skill, and how much do you enjoy using it? A skill counts as rated once both scores are set.</p>
+  <div class="bar"><span class="chip" id="rateCount">0 / 0 rated</span>
+    <span class="chip">Potential skills <b id="cPot">0</b></span>
+    <span class="chip">Highest score <b id="cTop">–</b></span></div>
+  <div class="fbar">
+    <input type="search" id="skFilter" placeholder="Filter skills or categories…" aria-label="Filter skills">
+    <label class="chk"><input type="checkbox" id="skUnrated"> Show only skills not fully rated</label>
+    <button class="btn" id="expandAll">Expand all</button>
+    <button class="btn" id="collapseAll">Collapse all</button>
+  </div>
+  <div id="rateList"></div>
+
+  <div class="addskill">
+    <h3>Missing a skill?</h3>
+    <p>Add any skill you think the list leaves out, then rate it above like the others.</p>
+    <div class="arow">
+      <select id="newCat" aria-label="Category for the new skill"></select>
+      <input type="text" id="newSkill" placeholder="Name of the skill" maxlength="120" aria-label="Name of the new skill">
+      <button class="btn primary" id="addSkillBtn">Add skill</button>
+    </div>
+  </div>
+
+  <h2 class="sec">2 · Your skills profile</h2>
+  <p class="sec-sub">Averages by category, highest score first. Only skills you have rated count toward each average.</p>
+  <div class="tablewrap"><table class="ptable" id="profile"></table></div>
+
+  <section class="block">
+    <h2>3 · My most valuable skills</h2>
+    <p class="sub">List up to 10 of your highest-scoring skills, the ones you are strong at and truly enjoy. Order them by importance or preference with the arrows. For each, rate how much you use it in your current work and note how you could use it more.</p>
+    <p class="suggest" id="valSuggestLabel"></p>
+    <div class="sugg-chips" id="valSuggest"></div>
+    <select class="add-sel" id="valAdd" aria-label="Add a skill to your most valuable list"></select>
+    <div id="valList"></div>
+    <details class="guide" style="margin-top:12px">
+      <summary>Questions to reflect on</summary>
+      <div class="guide-body"><ul>
+        <li>How much do these skills contribute to your sense of purpose and motivation at work?</li>
+        <li>Are there current projects or tasks where you could apply them more often?</li>
+        <li>What small but practical opportunities exist to bring them into use? Even small steps can make your work more engaging.</li>
+        <li>If your current role offers limited scope, which other roles or career paths would let you use them more often, and more meaningfully?</li>
+      </ul></div>
+    </details>
+  </section>
+
+  <section class="block">
+    <h2>4 · My potential skills</h2>
+    <p class="sub">List up to 10 skills you enjoy (4 or 5) but rate 3 or lower for skill level. Pick the ones where you already have some ability. For each, note where you use it now, inside or outside work, and what it would take to develop it.</p>
+    <p class="suggest" id="potSuggestLabel"></p>
+    <div class="sugg-chips" id="potSuggest"></div>
+    <select class="add-sel" id="potAdd" aria-label="Add a skill to your potential skills list"></select>
+    <div id="potList"></div>
+    <details class="guide" style="margin-top:12px">
+      <summary>Ideas for developing a skill</summary>
+      <div class="guide-body"><ul>
+        <li>Start applying it somewhere small and low-risk, at work or in a personal project, hobby or community activity.</li>
+        <li>Learn from someone who is strong at it.</li>
+        <li>Take a short course, read, or practise deliberately on a regular schedule.</li>
+        <li>Ask for feedback and use it to adjust.</li>
+      </ul></div>
+    </details>
+  </section>
+
+  <section class="block">
+    <h2>5 · Insights</h2>
+    <p class="sub">Draw out what you have learned from the exercise.</p>
+    <div id="insights"></div>
+  </section>
+
+  <footer>Review your skills · skills audit · answers stay on this device.</footer>
+</div>
+
+<div id="report"></div>
+
+<script>
+/* skills from the audit spreadsheet: [category, skill] */
+const RAW=[["Working with People", "Building trust-based relationships"], ["Working with People", "Demonstrating empathy and understanding"], ["Working with People", "Listening actively and attentively"], ["Working with People", "Supporting others through challenges"], ["Working with People", "Collaborating with diverse people"], ["Working with People", "Maintaining patience in difficult interactions"], ["Working with People", "Helping others feel heard and valued"], ["Verbal Communication", "Explaining ideas clearly"], ["Verbal Communication", "Speaking confidently in meetings"], ["Verbal Communication", "Adapting communication to the audience"], ["Verbal Communication", "Handling difficult conversations"], ["Verbal Communication", "Asking clear and relevant questions"], ["Verbal Communication", "Persuading or influencing verbally"], ["Verbal Communication", "Expressing opinions assertively"], ["Written Communication", "Writing clear and concise emails"], ["Written Communication", "Structuring written content logically"], ["Written Communication", "Writing reports or documentation"], ["Written Communication", "Summarising information effectively"], ["Written Communication", "Writing persuasive content"], ["Written Communication", "Editing and refining written work"], ["Written Communication", "Adapting writing style to context"], ["Leadership / Entrepreneurship", "Taking ownership of outcomes"], ["Leadership / Entrepreneurship", "Setting direction or vision"], ["Leadership / Entrepreneurship", "Motivating others toward goals"], ["Leadership / Entrepreneurship", "Making decisions under uncertainty"], ["Leadership / Entrepreneurship", "Initiating new ideas or initiatives"], ["Leadership / Entrepreneurship", "Thinking strategically about the future"], ["Leadership / Entrepreneurship", "Handling responsibility and risk"], ["Management", "Delegating tasks effectively"], ["Management", "Monitoring progress and delivery"], ["Management", "Managing time and priorities"], ["Management", "Coordinating people and resources"], ["Management", "Resolving team conflicts"], ["Management", "Giving constructive feedback"], ["Management", "Balancing people and performance"], ["Planning & Organising", "Breaking goals into tasks"], ["Planning & Organising", "Prioritising work effectively"], ["Planning & Organising", "Planning short-term activities"], ["Planning & Organising", "Planning long-term work"], ["Planning & Organising", "Managing deadlines"], ["Planning & Organising", "Organising information and resources"], ["Planning & Organising", "Anticipating risks and dependencies"], ["Teaching / Training / Consulting", "Explaining concepts clearly"], ["Teaching / Training / Consulting", "Facilitating group discussions"], ["Teaching / Training / Consulting", "Designing training sessions"], ["Teaching / Training / Consulting", "Adapting explanations to learners"], ["Teaching / Training / Consulting", "Guiding others to solutions"], ["Teaching / Training / Consulting", "Providing structured advice"], ["Teaching / Training / Consulting", "Assessing understanding or progress"], ["Administrative Skills", "Maintaining records accurately"], ["Administrative Skills", "Following standard procedures"], ["Administrative Skills", "Managing schedules and coordination"], ["Administrative Skills", "Handling routine operational tasks"], ["Administrative Skills", "Ensuring accuracy in documentation"], ["Administrative Skills", "Supporting day-to-day operations"], ["Administrative Skills", "Completing tasks consistently"], ["Analysis", "Breaking problems into components"], ["Analysis", "Identifying patterns and trends"], ["Analysis", "Evaluating options logically"], ["Analysis", "Interpreting information critically"], ["Analysis", "Applying structured thinking"], ["Analysis", "Questioning assumptions"], ["Analysis", "Making reasoned judgments"], ["Research", "Gathering information from sources"], ["Research", "Formulating research questions"], ["Research", "Comparing and validating data"], ["Research", "Synthesising information"], ["Research", "Drawing evidence-based conclusions"], ["Research", "Documenting findings clearly"], ["Research", "Staying investigative and curious"], ["Dealing with Data", "Collecting and organising data"], ["Dealing with Data", "Working comfortably with numbers"], ["Dealing with Data", "Interpreting data meaningfully"], ["Dealing with Data", "Identifying trends and anomalies"], ["Dealing with Data", "Using data for decisions"], ["Dealing with Data", "Presenting data clearly"], ["Dealing with Data", "Maintaining data accuracy"], ["Creating & Innovation", "Generating new ideas"], ["Creating & Innovation", "Thinking creatively beyond norms"], ["Creating & Innovation", "Connecting unrelated concepts"], ["Creating & Innovation", "Designing new approaches"], ["Creating & Innovation", "Experimenting with ideas"], ["Creating & Innovation", "Solving problems creatively"], ["Creating & Innovation", "Innovating within constraints"], ["Language Skills", "Communicating fluently in a language"], ["Language Skills", "Reading and understanding complex text"], ["Language Skills", "Writing effectively in a language"], ["Language Skills", "Translating ideas accurately"], ["Language Skills", "Using appropriate tone and vocabulary"], ["Language Skills", "Pronunciation and verbal clarity"], ["Language Skills", "Cultural sensitivity in language use"], ["IT Skills", "Using productivity tools effectively"], ["IT Skills", "Learning new software quickly"], ["IT Skills", "Troubleshooting basic issues"], ["IT Skills", "Working confidently with digital tools"], ["IT Skills", "Automating or optimising workflows"], ["IT Skills", "Understanding technology concepts"], ["IT Skills", "Adapting to new systems"], ["HR Skills", "Assessing people objectively"], ["HR Skills", "Conducting performance discussions"], ["HR Skills", "Handling employee concerns"], ["HR Skills", "Supporting employee development"], ["HR Skills", "Managing conflicts professionally"], ["HR Skills", "Understanding HR policies"], ["HR Skills", "Supporting organisational culture"], ["Sales Skills", "Understanding customer needs"], ["Sales Skills", "Building rapport with clients"], ["Sales Skills", "Presenting value propositions"], ["Sales Skills", "Handling objections confidently"], ["Sales Skills", "Negotiating outcomes"], ["Sales Skills", "Closing discussions effectively"], ["Sales Skills", "Maintaining client relationships"], ["Digital & Performance Marketing", "Planning and executing digital campaigns"], ["Digital & Performance Marketing", "Managing paid advertising (Google, Meta, LinkedIn, etc.)"], ["Digital & Performance Marketing", "Optimising SEO and website visibility"], ["Digital & Performance Marketing", "Analysing digital performance metrics"], ["Digital & Performance Marketing", "Managing social media strategy"], ["Digital & Performance Marketing", "Running email marketing campaigns"], ["Digital & Performance Marketing", "Improving lead conversion rates"], ["Product & Go-To-Market Marketing", "Defining product positioning and messaging"], ["Product & Go-To-Market Marketing", "Developing go-to-market (GTM) strategies"], ["Product & Go-To-Market Marketing", "Conducting competitor analysis"], ["Product & Go-To-Market Marketing", "Planning and executing product launches"], ["Product & Go-To-Market Marketing", "Translating features into customer benefits"], ["Product & Go-To-Market Marketing", "Enabling sales teams with product knowledge"], ["Product & Go-To-Market Marketing", "Gathering and using customer feedback"], ["Brand & Marketing Strategy", "Developing brand strategy"], ["Brand & Marketing Strategy", "Creating consistent brand messaging"], ["Brand & Marketing Strategy", "Conducting market research"], ["Brand & Marketing Strategy", "Identifying target customer segments"], ["Brand & Marketing Strategy", "Building marketing plans and budgets"], ["Brand & Marketing Strategy", "Managing brand communication across channels"], ["Brand & Marketing Strategy", "Measuring overall marketing ROI"], ["Problem Solving", "Identifying root causes"], ["Problem Solving", "Breaking complex problems down"], ["Problem Solving", "Generating solution options"], ["Problem Solving", "Evaluating solutions objectively"], ["Problem Solving", "Solving problems under pressure"], ["Problem Solving", "Applying past learnings"], ["Problem Solving", "Handling unexpected issues"], ["Stakeholder Management", "Understanding stakeholder expectations"], ["Stakeholder Management", "Managing conflicting priorities"], ["Stakeholder Management", "Communicating progress proactively"], ["Stakeholder Management", "Building trust with stakeholders"], ["Stakeholder Management", "Handling disagreements diplomatically"], ["Stakeholder Management", "Influencing without authority"], ["Stakeholder Management", "Maintaining long-term relationships"], ["Presentation Skills", "Structuring presentation content"], ["Presentation Skills", "Presenting clearly to groups"], ["Presentation Skills", "Adapting presentations to audience"], ["Presentation Skills", "Explaining complex ideas visually"], ["Presentation Skills", "Handling questions confidently"], ["Presentation Skills", "Presenting to senior leaders"], ["Presentation Skills", "Summarising key messages"], ["Process Improvement", "Identifying process gaps"], ["Process Improvement", "Documenting existing processes"], ["Process Improvement", "Suggesting practical improvements"], ["Process Improvement", "Implementing small changes"], ["Process Improvement", "Measuring improvement impact"], ["Process Improvement", "Standardising best practices"], ["Process Improvement", "Reviewing and refining processes"]];
+const SKILLS=RAW.map(([cat,name],i)=>({id:"s"+String(i+1).padStart(3,"0"),cat,name,custom:false}));
+const CATS=[];RAW.forEach(([c])=>{if(!CATS.includes(c))CATS.push(c);});
+const OTHER="Added by me";
+const MAX=10;
+const INSIGHTS=[
+  "What have you learnt about yourself through this exercise and auditing your skills?",
+  "What surprised you the most?",
+  "Which are the skills that you most want to keep in your reinvented career?",
+  "Which are the skills that you would most like to develop further?",
+  "What are the 3 key things that you will take from this exercise for the \"Skills\" piece of the jigsaw?"
+];
+const KEY="skillsAudit.v1";
+const $=id=>document.getElementById(id);
+function mk(tag,cls,html){const e=document.createElement(tag);if(cls)e.className=cls;if(html!=null)e.innerHTML=html;return e;}
+function escHtml(s){return String(s==null?"":s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");}
+
+/* ---------- state ---------- */
+function blank(){return {person:{name:"",email:""},ratings:{},custom:[],valuable:[],potential:[],insights:{}};}
+const ok5=v=>Number.isInteger(v)&&v>=1&&v<=5;
+function load(){
+  try{
+    const raw=localStorage.getItem(KEY);if(!raw)return blank();
+    const s=JSON.parse(raw),b=blank();
+    b.person.name=String((s.person&&s.person.name)||"");
+    b.person.email=String((s.person&&s.person.email)||"");
+    if(Array.isArray(s.custom))s.custom.forEach(c=>{
+      if(c&&typeof c.id==="string"&&/^c[a-z0-9]+$/.test(c.id)&&typeof c.name==="string"&&c.name.trim()&&!b.custom.some(x=>x.id===c.id))
+        b.custom.push({id:c.id,cat:(CATS.includes(c.cat)||c.cat===OTHER)?c.cat:OTHER,name:c.name.trim().slice(0,120)});
+    });
+    const ids=new Set(SKILLS.map(x=>x.id).concat(b.custom.map(x=>x.id)));
+    if(s.ratings&&typeof s.ratings==="object")ids.forEach(id=>{
+      const r=Object.prototype.hasOwnProperty.call(s.ratings,id)?s.ratings[id]:null;
+      if(r){const l=ok5(r.l)?r.l:null,e=ok5(r.e)?r.e:null;if(l||e)b.ratings[id]={l,e};}
+    });
+    const list=(arr,make)=>Array.isArray(arr)?arr.filter(it=>it&&ids.has(it.id)).filter((it,i,a)=>a.findIndex(x=>x.id===it.id)===i).slice(0,MAX).map(make):[];
+    b.valuable=list(s.valuable,it=>({id:it.id,use:(Number.isInteger(it.use)&&it.use>=0&&it.use<=10)?it.use:null,plan:String(it.plan||"")}));
+    b.potential=list(s.potential,it=>({id:it.id,now:String(it.now||""),develop:String(it.develop||"")}));
+    b.insights=(s.insights&&typeof s.insights==="object")?s.insights:{};
+    return b;
+  }catch(e){return blank();}
+}
+let state=load();
+let saveTimer;
+function save(){clearTimeout(saveTimer);const d=$("saveDot");d.style.opacity=".4";
+  saveTimer=setTimeout(()=>{try{localStorage.setItem(KEY,JSON.stringify(state));}catch(e){}d.style.opacity="1";},250);}
+
+/* ---------- helpers ---------- */
+function allSkills(){return SKILLS.concat(state.custom.map(c=>({id:c.id,cat:c.cat,name:c.name,custom:true})));}
+function findSkill(id){return allSkills().find(s=>s.id===id);}
+function getR(id){return state.ratings[id]||{l:null,e:null};}
+function setR(id,k,v){const r=state.ratings[id]||(state.ratings[id]={l:null,e:null});r[k]=v;if(!r.l&&!r.e)delete state.ratings[id];}
+function coef(id){const r=getR(id);return(r.l&&r.e)?r.l*r.e:null;}
+function isPotential(id){const r=getR(id);return !!(r.l&&r.e&&r.e>=4&&r.l<=3);}
+function coefClass(c){return c==null?"c0":c>=16?"c3":c>=9?"c2":"c1";}
+function catsInUse(){return CATS.concat(state.custom.some(c=>c.cat===OTHER)?[OTHER]:[]);}
+function catStats(cat){
+  const st={total:0,lSum:0,lN:0,eSum:0,eN:0,cSum:0,cN:0};
+  allSkills().forEach(s=>{
+    if(s.cat!==cat)return;st.total++;
+    const r=getR(s.id);
+    if(r.l){st.lSum+=r.l;st.lN++;}
+    if(r.e){st.eSum+=r.e;st.eN++;}
+    const c=coef(s.id);if(c){st.cSum+=c;st.cN++;}
+  });
+  st.lAvg=st.lN?st.lSum/st.lN:null;st.eAvg=st.eN?st.eSum/st.eN:null;st.cAvg=st.cN?st.cSum/st.cN:null;
+  return st;
+}
+function scoreLine(id){
+  const r=getR(id),c=coef(id);
+  return "Skill level "+(r.l||"–")+" · Enjoyment "+(r.e||"–")+" · Score "+(c||"–");
+}
+
+/* ---------- identity ---------- */
+const pName=$("pName"),pEmail=$("pEmail");
+function syncIdentity(){pName.value=state.person.name||"";pEmail.value=state.person.email||"";}
+pName.oninput=()=>{state.person.name=pName.value;save();};
+pEmail.oninput=()=>{state.person.email=pEmail.value;save();};
+
+/* ---------- section 1: rate list ---------- */
+const rateList=$("rateList");
+const userOpen=new Set([CATS[0]]);
+const skFilter=$("skFilter"),skUnrated=$("skUnrated");
+const isFiltering=()=>skFilter.value.trim()!==""||skUnrated.checked;
+
+function seg5(kind,s,row){
+  const wrap=mk("div","seg5");wrap.dataset.kind=kind;wrap.setAttribute("role","group");
+  wrap.setAttribute("aria-label",(kind==="l"?"Skill level":"Enjoyment")+" for "+s.name);
+  for(let v=1;v<=5;v++){
+    const b=mk("button");b.type="button";b.dataset.v=v;b.textContent=v;b.setAttribute("aria-pressed","false");
+    b.title=kind==="l"?(v===1?"1 – no skill":v===5?"5 – expert":String(v)):(v===1?"1 – not at all":v===5?"5 – I really love using this skill":String(v));
+    b.onclick=()=>pick(s.id,kind,v,row);
+    wrap.appendChild(b);
+  }
+  return wrap;
+}
+function paintRow(row,id){
+  const r=getR(id),c=coef(id);
+  row.querySelectorAll(".seg5").forEach(sg=>{
+    const k=sg.dataset.kind;
+    sg.querySelectorAll("button").forEach(b=>{const on=r[k]===+b.dataset.v;b.classList.toggle("on",on);b.setAttribute("aria-pressed",on?"true":"false");});
+  });
+  const cb=row.querySelector(".coef");cb.textContent=c||"–";cb.className="coef "+coefClass(c);
+  row.querySelector(".pot").hidden=!isPotential(id);
+}
+function rowEl(s){
+  const row=mk("div","skrow");row.dataset.id=s.id;
+  const nm=mk("div","sk-name");
+  nm.appendChild(document.createTextNode(s.name));
+  const pot=mk("span","pot","Potential");pot.title="You enjoy it (4–5) but rate your skill level 3 or lower";nm.appendChild(pot);
+  if(s.custom){
+    nm.appendChild(mk("span","sk-add","(added by you)"));
+    const del=mk("button","sk-del","Remove");del.type="button";
+    del.onclick=()=>removeCustom(s.id);nm.appendChild(del);
+  }
+  row.appendChild(nm);
+  const ctls=mk("div","ctls");
+  [["l","Skill level"],["e","Enjoyment"]].forEach(([k,lbl])=>{
+    const c=mk("div","ctl");c.appendChild(mk("span","cl",lbl));c.appendChild(seg5(k,s,row));ctls.appendChild(c);
+  });
+  row.appendChild(ctls);
+  row.appendChild(mk("span","coef c0","–"));
+  paintRow(row,s.id);
+  return row;
+}
+function catMeta(cat){
+  const st=catStats(cat);
+  return st.total+" skills · "+st.cN+" rated"+(st.cN?" · average score "+st.cAvg.toFixed(1):"");
+}
+function renderRateList(){
+  const q=skFilter.value.trim().toLowerCase(),unr=skUnrated.checked,filtering=isFiltering();
+  rateList.innerHTML="";
+  const all=allSkills();
+  let shown=0;
+  catsInUse().forEach(cat=>{
+    const items=all.filter(s=>s.cat===cat).filter(s=>{
+      if(unr&&coef(s.id))return false;
+      if(q&&!(s.name.toLowerCase().includes(q)||cat.toLowerCase().includes(q)))return false;
+      return true;
+    });
+    if(!items.length)return;
+    const d=mk("details","cat");d.dataset.cat=cat;
+    d.open=filtering?true:userOpen.has(cat);
+    const sm=mk("summary");
+    sm.appendChild(mk("span","cat-name",escHtml(cat)));
+    sm.appendChild(mk("span","cat-meta",escHtml(catMeta(cat))));
+    d.appendChild(sm);
+    const body=mk("div","cat-body");
+    items.forEach(s=>{body.appendChild(rowEl(s));shown++;});
+    d.appendChild(body);
+    d.addEventListener("toggle",()=>{if(isFiltering())return;if(d.open)userOpen.add(cat);else userOpen.delete(cat);});
+    rateList.appendChild(d);
+  });
+  if(!shown){
+    rateList.appendChild(mk("div","r-empty",unr&&!q?"Every skill is fully rated. Nice work.":"No skills match that filter."));
+  }
+}
+function paintCats(){rateList.querySelectorAll("details.cat").forEach(d=>{d.querySelector(".cat-meta").textContent=catMeta(d.dataset.cat);});}
+function renderCounts(){
+  const all=allSkills();let full=0,pot=0,top=0;
+  all.forEach(s=>{const c=coef(s.id);if(c){full++;if(c>top)top=c;}if(isPotential(s.id))pot++;});
+  $("rateCount").textContent=full+" / "+all.length+" rated";
+  $("cPot").textContent=pot;$("cTop").textContent=top||"–";
+}
+function pick(id,k,v,row){
+  const cur=getR(id)[k];
+  setR(id,k,cur===v?null:v);
+  paintRow(row,id);save();afterRate();
+}
+function afterRate(){paintCats();renderCounts();renderProfile();renderSuggest();renderList("valuable");renderList("potential");}
+function removeCustom(id){
+  const s=findSkill(id);if(!s)return;
+  if(!confirm("Remove \""+s.name+"\" and its ratings?"))return;
+  state.custom=state.custom.filter(c=>c.id!==id);delete state.ratings[id];
+  state.valuable=state.valuable.filter(x=>x.id!==id);state.potential=state.potential.filter(x=>x.id!==id);
+  save();renderRateList();afterRate();
+}
+function addCustom(){
+  const inp=$("newSkill"),name=inp.value.trim(),cat=$("newCat").value;
+  if(!name){inp.focus();return;}
+  if(allSkills().some(s=>s.cat===cat&&s.name.toLowerCase()===name.toLowerCase())){alert("That skill is already in this category.");return;}
+  const id="c"+Date.now().toString(36)+Math.random().toString(36).slice(2,6);
+  state.custom.push({id,cat,name:name.slice(0,120)});
+  inp.value="";userOpen.add(cat);
+  skFilter.value="";skUnrated.checked=false;
+  save();renderRateList();afterRate();
+}
+function buildCatSelect(){
+  const sel=$("newCat");sel.innerHTML="";
+  CATS.forEach(c=>{const o=mk("option");o.value=c;o.textContent=c;sel.appendChild(o);});
+  const o=mk("option");o.value=OTHER;o.textContent="Other (not in the list)";sel.appendChild(o);
+}
+$("addSkillBtn").onclick=addCustom;
+$("newSkill").onkeydown=e=>{if(e.key==="Enter"){e.preventDefault();addCustom();}};
+skFilter.oninput=renderRateList;skUnrated.onchange=renderRateList;
+$("expandAll").onclick=()=>{catsInUse().forEach(c=>userOpen.add(c));skFilter.value="";skUnrated.checked=false;renderRateList();};
+$("collapseAll").onclick=()=>{userOpen.clear();skFilter.value="";skUnrated.checked=false;renderRateList();};
+
+/* ---------- section 2: profile ---------- */
+function meter(avg,max,cls){
+  if(avg==null)return '<span class="na">–</span>';
+  return '<span class="mt"><b>'+avg.toFixed(1)+'</b><span class="meter '+cls+'"><i style="width:'+Math.round(avg/max*100)+'%"></i></span></span>';
+}
+function profileRows(){
+  const rows=catsInUse().map(cat=>Object.assign({cat},catStats(cat)));
+  rows.sort((a,b)=>((b.cAvg==null?-1:b.cAvg)-(a.cAvg==null?-1:a.cAvg))||a.cat.localeCompare(b.cat));
+  return rows;
+}
+function renderProfile(){
+  let h='<thead><tr><th>Category</th><th>Skill level (avg)</th><th>Enjoyment (avg)</th><th>Skill coefficient (avg)</th><th>Rated</th></tr></thead><tbody>';
+  profileRows().forEach(r=>{
+    h+='<tr><td class="cn">'+escHtml(r.cat)+'</td><td>'+meter(r.lAvg,5,"l")+'</td><td>'+meter(r.eAvg,5,"e")+'</td><td>'+meter(r.cAvg,25,"c")+'</td><td>'+r.cN+' / '+r.total+'</td></tr>';
+  });
+  $("profile").innerHTML=h+'</tbody>';
+}
+
+/* ---------- sections 3 & 4: shortlists ---------- */
+const KINDS={
+  valuable:{list:()=>state.valuable,listEl:"valList",chips:"valSuggest",lbl:"valSuggestLabel",sel:"valAdd",chipCls:"energize",selText:"+ Add a skill to your most valuable list…",empty:"No skills added yet. Use the suggestions or the dropdown above."},
+  potential:{list:()=>state.potential,listEl:"potList",chips:"potSuggest",lbl:"potSuggestLabel",sel:"potAdd",chipCls:"",selText:"+ Add a skill to your potential skills list…",empty:"No skills added yet. Use the suggestions or the dropdown above."}
+};
+function candidates(kind){
+  const inList=id=>KINDS[kind].list().some(x=>x.id===id);
+  let arr=allSkills().filter(s=>coef(s.id)&&!inList(s.id));
+  if(kind==="potential")arr=arr.filter(s=>isPotential(s.id));
+  arr.sort((a,b)=>(coef(b.id)-coef(a.id))||(getR(b.id).e-getR(a.id).e)||a.name.localeCompare(b.name));
+  return arr;
+}
+function renderSuggest(){
+  Object.keys(KINDS).forEach(kind=>{
+    const K=KINDS[kind],list=K.list(),isVal=kind==="valuable";
+    const arr=candidates(kind);
+    const chips=$(K.chips);chips.innerHTML="";
+    const lbl=$(K.lbl);
+    if(list.length>=MAX){lbl.textContent="List is full ("+MAX+"). Remove one to add another.";}
+    else if(arr.length){
+      lbl.textContent=isVal?"Your highest-scoring skills. Tap to add:":arr.length+" skill"+(arr.length===1?"":"s")+" match (enjoyment 4–5, skill level 3 or lower). Tap to add:";
+      arr.slice(0,12).forEach(s=>{
+        const b=mk("button","sugg "+K.chipCls);b.type="button";b.textContent=s.name+" · "+coef(s.id);
+        b.title=s.cat;b.onclick=()=>addItem(kind,s.id);chips.appendChild(b);
+      });
+    }else{
+      lbl.textContent=isVal?"Rate skills in section 1 to see your highest-scoring ones here.":"Skills you enjoy (4–5) but rate 3 or lower for skill level will appear here.";
+    }
+    const sel=$(K.sel);sel.innerHTML="";
+    const first=mk("option");first.value="";first.textContent=K.selText;sel.appendChild(first);
+    const inList=id=>list.some(x=>x.id===id);
+    const all=allSkills();
+    catsInUse().forEach(cat=>{
+      const items=all.filter(s=>s.cat===cat&&!inList(s.id));if(!items.length)return;
+      const g=mk("optgroup");g.label=cat;
+      items.forEach(s=>{const o=mk("option");o.value=s.id;o.textContent=s.name;g.appendChild(o);});
+      sel.appendChild(g);
+    });
+    sel.value="";
+  });
+}
+function addItem(kind,id){
+  const arr=KINDS[kind].list();
+  if(arr.some(x=>x.id===id))return;
+  if(arr.length>=MAX){alert("You can list up to "+MAX+". Remove one first.");return;}
+  arr.push(kind==="valuable"?{id,use:null,plan:""}:{id,now:"",develop:""});
+  save();renderList(kind);renderSuggest();
+}
+$("valAdd").onchange=e=>{if(e.target.value)addItem("valuable",e.target.value);};
+$("potAdd").onchange=e=>{if(e.target.value)addItem("potential",e.target.value);};
+
+function field(label,value,onInput){
+  const w=mk("div","rq");w.appendChild(mk("label",null,escHtml(label)));
+  const ta=mk("textarea");ta.value=value||"";ta.oninput=()=>onInput(ta.value);
+  const id="ta"+Math.random().toString(36).slice(2,9);ta.id=id;w.firstChild.htmlFor=id;
+  w.appendChild(ta);return w;
+}
+function renderList(kind){
+  const K=KINDS[kind],list=K.list(),isVal=kind==="valuable";
+  const el=$(K.listEl);el.innerHTML="";
+  if(!list.length){el.appendChild(mk("div","r-empty",K.empty));return;}
+  list.forEach((it,i)=>{
+    const s=findSkill(it.id);if(!s)return;
+    const item=mk("div","ritem");
+    const head=mk("div","ritem-head");
+    head.appendChild(mk("span","rk",String(i+1)));
+    head.appendChild(mk("div",null,'<div class="rn">'+escHtml(s.name)+'</div><div class="rs">'+escHtml(s.cat)+' · '+scoreLine(s.id)+'</div>'));
+    const acts=mk("div","acts");
+    const up=mk("button",null,"↑");up.type="button";up.title="Move up";up.disabled=i===0;
+    const dn=mk("button",null,"↓");dn.type="button";dn.title="Move down";dn.disabled=i===list.length-1;
+    const rm=mk("button","rm","✕");rm.type="button";rm.title="Remove";
+    const move=(d)=>{const j=i+d;if(j<0||j>=list.length)return;const t=list[i];list[i]=list[j];list[j]=t;save();renderList(kind);};
+    up.onclick=()=>move(-1);dn.onclick=()=>move(1);
+    rm.onclick=()=>{list.splice(i,1);save();renderList(kind);renderSuggest();};
+    acts.appendChild(up);acts.appendChild(dn);acts.appendChild(rm);head.appendChild(acts);
+    item.appendChild(head);
+
+    if(isVal){
+      const wrap=mk("div","ruse"+(it.use==null?" unset":""));
+      wrap.appendChild(mk("span","ul","Using it in my current work (0 = not at all, 10 = fully):"));
+      const rg=mk("input");rg.type="range";rg.min=0;rg.max=10;rg.step=1;rg.value=it.use==null?5:it.use;
+      rg.setAttribute("aria-label","How much I use "+s.name+" in my current work, 0 to 10");
+      const uv=mk("span","uv",it.use==null?"Not set":it.use+" / 10");
+      const clr=mk("button","clr","Clear");clr.type="button";clr.hidden=it.use==null;
+      rg.oninput=()=>{it.use=+rg.value;wrap.classList.remove("unset");uv.textContent=it.use+" / 10";clr.hidden=false;save();};
+      clr.onclick=()=>{it.use=null;wrap.classList.add("unset");rg.value=5;uv.textContent="Not set";clr.hidden=true;save();};
+      wrap.appendChild(rg);wrap.appendChild(uv);wrap.appendChild(clr);
+      item.appendChild(wrap);
+      item.appendChild(field("What can I do to use more of this skill in my current work? Or is there a role or career that would let me use it more often?",it.plan,v=>{it.plan=v;save();}));
+    }else{
+      item.appendChild(field("Where am I using this skill at the moment? (At work, or outside it: projects, hobbies, community.)",it.now,v=>{it.now=v;save();}));
+      item.appendChild(field("What would I need to do to develop this skill further?",it.develop,v=>{it.develop=v;save();}));
+    }
+    el.appendChild(item);
+  });
+}
+
+/* ---------- section 5: insights ---------- */
+const insEl=$("insights");
+function buildInsights(){
+  insEl.innerHTML="";
+  INSIGHTS.forEach((q,i)=>{
+    const wrap=mk("div","rq",'<label for="ins'+i+'"><span class="num">'+(i+1)+'.</span>'+escHtml(q)+'</label><textarea id="ins'+i+'"></textarea>');
+    const ta=wrap.querySelector("textarea");ta.value=state.insights["q"+i]||"";
+    ta.oninput=()=>{state.insights["q"+i]=ta.value;save();};
+    insEl.appendChild(wrap);
+  });
+}
+
+/* ---------- export / import / reset ---------- */
+$("exportBtn").onclick=()=>{
+  const blob=new Blob([JSON.stringify(state,null,2)],{type:"application/json"});
+  const a=document.createElement("a");a.href=URL.createObjectURL(blob);
+  a.download="skills-audit-"+new Date().toISOString().slice(0,10)+".json";a.click();URL.revokeObjectURL(a.href);
+};
+$("importBtn").onclick=()=>$("importFile").click();
+$("importFile").onchange=e=>{
+  const f=e.target.files[0];if(!f)return;const r=new FileReader();
+  r.onload=()=>{try{JSON.parse(r.result);localStorage.setItem(KEY,r.result);state=load();renderAll();}catch(err){alert("Could not read that file.");}};
+  r.readAsText(f);e.target.value="";
+};
+$("resetBtn").onclick=()=>{
+  if(confirm("Clear all ratings, added skills, reflections and notes? This can't be undone.")){state=blank();save();skFilter.value="";skUnrated.checked=false;renderAll();}
+};
+
+/* ---------- printable report ---------- */
+function buildReport(){
+  const r=$("report");
+  const nm=escHtml((state.person.name||"").trim()),em=escHtml((state.person.email||"").trim());
+  const date=new Date().toLocaleDateString(undefined,{year:"numeric",month:"long",day:"numeric"});
+  const all=allSkills();let full=0;all.forEach(s=>{if(coef(s.id))full++;});
+  const num=v=>v==null?"–":v;
+  let h=`<p class="rpt-title">Review your skills</p>
+    <p class="rpt-sub">Skills audit · career jigsaw</p>
+    ${(nm||em)?`<p class="rpt-person">${nm||"(name not given)"}${em?` · ${em}`:""}</p>`:""}
+    <div class="rpt-meta"><span>Generated <b>${date}</b></span><span>Rated <b>${full}</b>/${all.length}</span><span>Most valuable listed <b>${state.valuable.length}</b></span><span>Potential listed <b>${state.potential.length}</b></span></div>
+    <hr>`;
+
+  // A. profile by category
+  h+=`<h2><span class="n">A.</span> Skills profile by category</h2>
+    <p class="rpt-note">Skill level: 1 = no skill, 5 = expert. Enjoyment: 1 = not at all, 5 = I really love using this skill. Coefficient = skill level × enjoyment (maximum 25). Categories are ordered by highest average coefficient; averages count only the skills you have rated.</p>
+    <table class="sk"><tr><th>Category</th><th class="num">Skill level<br>(avg)</th><th class="num">Enjoyment<br>(avg)</th><th class="num">Coefficient<br>(avg)</th><th class="num">Rated</th></tr>`;
+  profileRows().forEach(p=>{
+    h+=`<tr><td class="skn">${escHtml(p.cat)}</td><td class="num">${p.lAvg==null?"–":p.lAvg.toFixed(1)}</td><td class="num">${p.eAvg==null?"–":p.eAvg.toFixed(1)}</td><td class="num coefv">${p.cAvg==null?"–":p.cAvg.toFixed(1)}</td><td class="num">${p.cN} / ${p.total}</td></tr>`;
+  });
+  h+=`</table>`;
+
+  // B. most valuable skills
+  h+=`<h2><span class="n">B.</span> My most valuable skills</h2>`;
+  if(!state.valuable.length)h+=`<p class="rpt-note">No skills listed.</p>`;
+  else{
+    h+=`<table class="sk"><tr><th style="width:34px">Rank</th><th style="width:17%">Category</th><th style="width:19%">Skill</th><th class="num">Level × enjoyment</th><th class="num">Using it now<br>0–10</th><th>What can I do to use more of this skill in my current work, or is there a role or career that would let me use it more often?</th></tr>`;
+    state.valuable.forEach((it,i)=>{
+      const s=findSkill(it.id);if(!s)return;const x=getR(s.id),c=coef(s.id);
+      h+=`<tr><td class="num">${i+1}</td><td class="pre">${escHtml(s.cat)}</td><td class="skn">${escHtml(s.name)}</td><td class="num">${c?`${x.l} × ${x.e} = <b>${c}</b>`:"–"}</td><td class="num">${it.use==null?"–":it.use}</td><td class="pre">${escHtml(it.plan)}</td></tr>`;
+    });
+    h+=`</table>`;
+  }
+
+  // C. potential skills
+  h+=`<h2><span class="n">C.</span> My potential skills</h2>`;
+  if(!state.potential.length)h+=`<p class="rpt-note">No skills listed.</p>`;
+  else{
+    h+=`<table class="sk"><tr><th style="width:34px">Rank</th><th style="width:15%">Category</th><th style="width:17%">Skill</th><th class="num">Skill level · enjoyment</th><th>Where am I using this skill at the moment?</th><th>What would I need to do to develop this skill further?</th></tr>`;
+    state.potential.forEach((it,i)=>{
+      const s=findSkill(it.id);if(!s)return;const x=getR(s.id);
+      h+=`<tr><td class="num">${i+1}</td><td class="pre">${escHtml(s.cat)}</td><td class="skn">${escHtml(s.name)}</td><td class="num">${num(x.l)} · ${num(x.e)}</td><td class="pre">${escHtml(it.now)}</td><td class="pre">${escHtml(it.develop)}</td></tr>`;
+    });
+    h+=`</table>`;
+  }
+
+  // D. insights
+  h+=`<h2><span class="n">D.</span> Insights</h2>`;
+  INSIGHTS.forEach((q,i)=>{
+    const a=(state.insights["q"+i]||"").trim();
+    h+=`<div class="qa"><p class="q">${i+1}. ${escHtml(q)}</p><p class="a${a?"":" empty"}">${a?escHtml(a):"(not answered)"}</p></div>`;
+  });
+  h+=`<div class="rpt-foot">Review your skills · skills audit · produced on your own device; nothing was uploaded.</div>`;
+  r.innerHTML=h;
+}
+function reportFilename(){
+  const raw=(state.person.name||"").trim();
+  const safe=raw?raw.replace(/[^\w\s-]/g,"").trim().replace(/\s+/g,"_"):"";
+  return (safe||"skills")+"_skills_audit_report";
+}
+const BASE_TITLE=document.title;
+$("printBtn").onclick=()=>{buildReport();document.title=reportFilename();window.print();};
+window.addEventListener("beforeprint",()=>{buildReport();document.title=reportFilename();});
+window.addEventListener("afterprint",()=>{document.title=BASE_TITLE;});
+
+/* ---------- init ---------- */
+function renderAll(){
+  syncIdentity();buildCatSelect();renderRateList();renderCounts();renderProfile();
+  renderList("valuable");renderList("potential");renderSuggest();buildInsights();
+}
+renderAll();
+</script>
+</body>
+</html>

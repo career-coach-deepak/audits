@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Assessing Your True Needs</title>
+<style>
+  :root{
+    --bg:#e9ebee;--panel:#ffffff;--ink:#1c2230;--muted:#69707d;
+    --line:#d8dce2;--line-strong:#c4cad3;
+    --accent:#8a5a2b;--accent-soft:#f4ece2;
+    --shadow:0 1px 2px rgba(20,30,50,.06),0 4px 14px rgba(20,30,50,.06);
+    --radius:10px;
+    --sans:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    --serif:"Iowan Old Style","Palatino Linotype",Palatino,Georgia,"Times New Roman",serif;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0}
+  body{font-family:var(--sans);color:var(--ink);background:var(--bg);line-height:1.45;-webkit-font-smoothing:antialiased}
+  .wrap{max-width:900px;margin:0 auto;padding:22px 18px 90px}
+
+  header.top{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:14px;margin-bottom:12px}
+  .title-block .eyebrow{font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);margin:0 0 4px}
+  .title-block h1{font-family:var(--serif);font-weight:600;font-size:29px;line-height:1.1;margin:0}
+  .toolbar{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+  .btn{font:inherit;font-size:13px;border:1px solid var(--line-strong);background:var(--panel);color:var(--ink);padding:7px 12px;border-radius:8px;cursor:pointer;white-space:nowrap}
+  .btn:hover{border-color:#9aa2ae}
+  .btn.ghost{background:transparent}
+  .btn.danger:hover{border-color:#c9524a;color:#b4433c}
+  .save-dot{font-size:12px;color:var(--muted);display:inline-flex;align-items:center;gap:6px}
+  .save-dot b{width:7px;height:7px;border-radius:50%;background:var(--accent);display:inline-block}
+
+  details.guide{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);margin:12px 0;box-shadow:var(--shadow)}
+  details.guide>summary{cursor:pointer;padding:12px 16px;font-weight:600;font-size:13.5px;list-style:none;color:#2a3140}
+  details.guide>summary::-webkit-details-marker{display:none}
+  details.guide>summary::before{content:"›";display:inline-block;margin-right:8px;transition:transform .15s;color:var(--muted)}
+  details.guide[open]>summary::before{transform:rotate(90deg)}
+  .guide-body{padding:0 16px 14px;font-size:13px;color:#3a414f}
+  .guide-body p{margin:8px 0}
+  .guide-body ul{margin:8px 0;padding-left:20px}
+  .guide-body li{margin:4px 0}
+  .guide-body .quote{font-style:italic;color:#2a3140;border-left:3px solid var(--accent);padding-left:12px;margin:10px 0}
+
+  /* Identity */
+  .identity{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);padding:14px 16px;margin-bottom:16px;display:grid;grid-template-columns:1fr 1fr;gap:14px}
+  @media(max-width:620px){.identity{grid-template-columns:1fr}}
+  .identity .field label{display:block;font-size:11px;letter-spacing:.04em;text-transform:uppercase;color:var(--muted);margin-bottom:5px}
+  .identity .field input{width:100%;font:inherit;font-size:14px;padding:9px 12px;border:1px solid var(--line-strong);border-radius:8px;background:#fff}
+  .identity-note{grid-column:1/-1;margin:0;font-size:12px;color:var(--muted)}
+
+  section.block{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);margin-top:20px;padding:18px}
+  section.block h2{font-family:var(--serif);font-weight:600;font-size:20px;margin:0 0 3px}
+  section.block .sub{color:var(--muted);font-size:13px;margin:0 0 14px}
+  section.block h2 .step{font-family:var(--sans);font-size:12px;font-weight:700;color:var(--accent);letter-spacing:.06em;text-transform:uppercase;display:block;margin-bottom:2px}
+
+  .needs-grid{display:flex;flex-direction:column;gap:0}
+  .need{display:grid;grid-template-columns:210px 1fr;gap:14px;align-items:start;padding:11px 0;border-bottom:1px solid #eef0f2}
+  .need:last-child{border-bottom:none}
+  @media(max-width:560px){.need{grid-template-columns:1fr;gap:5px}}
+  .need .nl{font-size:13.5px;font-weight:600;color:#2a3140;padding-top:8px}
+  .need .nl .hint{display:block;font-weight:400;color:var(--muted);font-size:12px;margin-top:2px}
+  .need textarea{width:100%;font:inherit;font-size:13.5px;padding:9px 11px;border:1px solid var(--line-strong);border-radius:8px;resize:vertical;min-height:44px;background:#fff;line-height:1.5}
+  .need textarea:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 2px var(--accent-soft)}
+
+  .rq{margin-bottom:14px}
+  .rq:last-child{margin-bottom:0}
+  .rq label{display:block;font-size:13.5px;font-weight:600;margin-bottom:6px;color:#2a3140}
+  .rq label .num{color:var(--accent);margin-right:4px}
+  .rq textarea{width:100%;font:inherit;font-size:13.5px;padding:9px 11px;border:1px solid var(--line-strong);border-radius:8px;resize:vertical;min-height:56px;background:#fff;line-height:1.5}
+  .rq textarea:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 2px var(--accent-soft)}
+
+  .callout{background:var(--accent-soft);border:1px solid #e4d3bd;border-radius:10px;padding:11px 14px;margin:14px 0 0;font-size:13px;color:#5c4326;font-style:italic}
+
+  footer{margin-top:26px;color:var(--muted);font-size:12px;text-align:center}
+
+  /* ---------- printable report ---------- */
+  #report{display:none}
+  @media print{
+    @page{margin:16mm 15mm}
+    html,body{background:#fff}
+    .wrap{display:none!important}
+    #report{display:block!important;color:#15171c;font-family:var(--serif);font-size:10.5pt;line-height:1.5}
+    #report .rpt-title{font-size:22pt;font-weight:600;margin:0 0 2px}
+    #report .rpt-sub{font-family:var(--sans);font-size:9.5pt;color:#555;margin:0}
+    #report .rpt-person{font-family:var(--sans);font-size:11pt;color:#15171c;font-weight:600;margin:8px 0 0}
+    #report .rpt-meta{font-family:var(--sans);font-size:9pt;color:#555;margin:8px 0 0}
+    #report .rpt-meta span b{color:#15171c}
+    #report hr{border:none;border-top:1.5px solid #15171c;margin:12px 0 16px}
+    #report h2{font-size:14pt;font-weight:600;margin:20px 0 6px;padding-bottom:5px;border-bottom:1px solid #c9ccd2;break-after:avoid}
+    #report h2 .n{color:#8a5a2b}
+    #report table{width:100%;border-collapse:collapse;font-size:10pt;break-inside:auto}
+    #report td{border:1px solid #cfd3da;padding:7px 9px;vertical-align:top}
+    #report tr{break-inside:avoid}
+    #report td.k{width:210px;font-family:var(--sans);font-weight:600;font-size:9pt;background:#f4f5f7;color:#2a3140}
+    #report td.v.empty{color:#9aa1ab;font-style:italic;font-family:var(--sans);font-size:9pt}
+    #report .qa{break-inside:avoid;margin:9px 0}
+    #report .qa .q{font-family:var(--sans);font-weight:600;font-size:9pt;color:#39414f;margin:0 0 1px}
+    #report .qa .a{white-space:pre-wrap;font-size:10.5pt;margin:0}
+    #report .qa .a.empty{color:#9aa1ab;font-style:italic;font-family:var(--sans);font-size:9pt}
+    #report .rpt-foot{font-family:var(--sans);font-size:8pt;color:#888;margin-top:24px;border-top:1px solid #d8dce2;padding-top:8px}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="top">
+    <div class="title-block">
+      <p class="eyebrow">Career jigsaw · exercise</p>
+      <h1>Assessing your true needs</h1>
+    </div>
+    <div class="toolbar">
+      <span class="save-dot" id="saveDot"><b></b> Saved</span>
+      <button class="btn" id="printBtn">Print / PDF</button>
+      <button class="btn" id="exportBtn">Export backup</button>
+      <button class="btn" id="importBtn">Import</button>
+      <input type="file" id="importFile" accept="application/json" hidden>
+      <button class="btn danger" id="resetBtn">Reset</button>
+    </div>
+  </header>
+
+  <details class="guide">
+    <summary>Why this matters &amp; what "needs" means</summary>
+    <div class="guide-body">
+      <p>This piece is about getting really clear about what you <b>need</b> from your career — which is not the same as what you <b>want</b>. The smaller you can make your list of needs, the less restrictive they are and the more freedom you'll have to reinvent your career.</p>
+      <p class="quote">"Those who are the richest are those who need the least."</p>
+      <p>The goal is to be realistic about your true needs so you can create more space, energy and options.</p>
+      <p>Think of needs as the extrinsic rewards of your work and the fixed points that limit your flexibility: the income you need, work location and commute, hours you're available, acceptable work patterns (shifts? nights?), physical demands you can cope with, time away from home, and the perks that are absolutely essential. Being vague about money keeps people stuck, so it's worth looking at in detail.</p>
+    </div>
+  </details>
+
+  <div class="identity">
+    <div class="field"><label for="pName">Name</label><input type="text" id="pName" placeholder="Full name" autocomplete="name"></div>
+    <div class="field"><label for="pEmail">Email</label><input type="email" id="pEmail" placeholder="name@example.com" autocomplete="email"></div>
+    <p class="identity-note">Used to label the report and the saved PDF filename. Everything you type stays on this device.</p>
+  </div>
+
+  <section class="block">
+    <h2><span class="step">Step 1 · first pass</span>Initial sense of your needs</h2>
+    <p class="sub">Capture anything relevant and important to get an initial sense. Don't overthink it yet.</p>
+    <div class="needs-grid" id="needsInitial"></div>
+  </section>
+
+  <details class="guide">
+    <summary>Needs or wants? (read before refining)</summary>
+    <div class="guide-body">
+      <p>The fewer needs or limiting factors you have, the more flexibility you create. Take a hard look and make sure you're not making assumptions or restricting yourself unnecessarily. Don't assume you know what your partner, parents or children want — people can be surprisingly flexible and supportive when they know a change will make you happier and healthier.</p>
+      <p>Revisit your list and ask whether each item is really essential, or a "nice to have" you could live without, especially for a fixed period to help you get where you want to be.</p>
+      <p class="quote">Be careful not to give up what you want most for what you want now.</p>
+    </div>
+  </details>
+
+  <section class="block">
+    <h2><span class="step">Step 2 · the money story</span>What income do you really need?</h2>
+    <p class="sub">"Can't afford it" is one of the easiest excuses for not reinventing a career. Get into the actual numbers — there's no shortcut.</p>
+    <div id="money"></div>
+    <div class="rq" style="margin-top:14px"><label>Could you offset any of these needs?</label>
+      <textarea data-field="offset" placeholder="Mitigating factors — e.g. working closer to home or from home could cut childcare and commuting costs; better long-term earning potential might let you trade some benefits now…"></textarea></div>
+    <div class="callout">A great career lets you be truly you and use your unique strengths. If what you believe you can do is determined mainly by the size of your paycheck, you can end up paying a high price in countless other ways.</div>
+  </section>
+
+  <details class="guide">
+    <summary>More prompts on spending &amp; your "money story"</summary>
+    <div class="guide-body">
+      <p>When we're unhappy or stressed at work we're tempted to spend to compensate — taxis because we're tired or late, treats, eating out because there's no time to shop, gym memberships we don't use, daily caffeine and alcohol to keep going. It adds up.</p>
+      <ul>
+        <li>Is your current job "high maintenance"? How much goes on clothes, meals out and entertainment because it's part of the deal? Would that decline if you changed careers?</li>
+        <li>Vacations — if you were happier and more fulfilled at work, would you need to spend the same on these?</li>
+        <li>Commute — could it be cheaper, a smaller or more economical vehicle, or shared lifts?</li>
+      </ul>
+      <p>Becoming aware of spending habits can create powerful change and let you rebuild life more economically — more freedom to live and work the way you want. If you need to, take time to cut costs or build a reinvention fund, and be realistic about the timescale. The time will pass anyway; the sooner you start, the sooner you get there.</p>
+    </div>
+  </details>
+
+  <section class="block">
+    <h2><span class="step">Step 3 · refined</span>Final needs assessment</h2>
+    <p class="sub">Now you've thought it through, what are the true considerations you need to take into account as you reinvent your career? This is the key piece for your jigsaw.</p>
+    <div class="needs-grid" id="needsFinal"></div>
+  </section>
+
+  <section class="block">
+    <h2>Your 3 top insights</h2>
+    <p class="sub">Capture these so they stay front of mind as you move forward.</p>
+    <div class="rq"><label><span class="num">1.</span>Insight one</label><textarea data-field="insight1"></textarea></div>
+    <div class="rq"><label><span class="num">2.</span>Insight two</label><textarea data-field="insight2"></textarea></div>
+    <div class="rq"><label><span class="num">3.</span>Insight three</label><textarea data-field="insight3"></textarea></div>
+  </section>
+
+  <details class="guide">
+    <summary>Want to explore your money story further?</summary>
+    <div class="guide-body">
+      <p>For many of us our relationship with money is deep-seated and hard to shift. Two thought-provoking books:</p>
+      <ul>
+        <li><i>Rich Dad Poor Dad</i> — Robert T. Kiyosaki</li>
+        <li><i>Money, a Love Story: Untangle Your Financial Woes and Create the Life You Really Want</i> — Kate Northrup</li>
+      </ul>
+    </div>
+  </details>
+
+  <footer>Assessing your true needs · answers stay on this device.</footer>
+</div>
+
+<div id="report"></div>
+
+<script>
+const NEEDS=[
+  ["location","Location",""],
+  ["commute","Maximum commuting time / distance",""],
+  ["hours","Maximum hours per week / month / year",""],
+  ["patterns","Work patterns","e.g. shifts, nights, weekends?"],
+  ["physical","Physical considerations",""],
+  ["childcare","Childcare / education considerations",""],
+  ["benefits","Essential benefits / perks",""],
+  ["income","Minimum monthly / annual income",""],
+  ["other","Other limiting factors",""]
+];
+const MONEY=[
+  "How much money do my family and I actually need, monthly and annually?",
+  "How predictable and regular do I need my income to be?",
+  "Am I OK with earning less in the short term to get where I want to be?",
+  "Are my ideas about money really my own, or based on others' expectations or people I compare myself with?",
+  "Do my beliefs about money and security enhance my enjoyment of life, or limit it?"
+];
+const KEY="trueNeeds.v1";
+
+function blank(){
+  return {person:{name:"",email:""}, initial:{}, final:{}, money:{}, fields:{}};
+}
+function load(){
+  try{
+    const raw=localStorage.getItem(KEY);
+    if(!raw) return blank();
+    const s=JSON.parse(raw), b=blank();
+    b.person.name=(s.person&&s.person.name)||"";
+    b.person.email=(s.person&&s.person.email)||"";
+    b.initial=s.initial||{}; b.final=s.final||{}; b.money=s.money||{}; b.fields=s.fields||{};
+    return b;
+  }catch(e){return blank();}
+}
+let state=load();
+
+let saveTimer;
+function save(){
+  clearTimeout(saveTimer);
+  const dot=document.getElementById("saveDot");dot.style.opacity=".4";
+  saveTimer=setTimeout(()=>{localStorage.setItem(KEY,JSON.stringify(state));dot.style.opacity="1";},250);
+}
+function escHtml(s){return (s||"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");}
+
+/* identity */
+const pName=document.getElementById("pName"),pEmail=document.getElementById("pEmail");
+function syncIdentity(){pName.value=state.person.name||"";pEmail.value=state.person.email||"";}
+pName.oninput=()=>{state.person.name=pName.value;save();};
+pEmail.oninput=()=>{state.person.email=pEmail.value;save();};
+
+/* needs tables */
+function buildNeeds(containerId,store){
+  const el=document.getElementById(containerId);
+  el.innerHTML="";
+  NEEDS.forEach(([k,label,hint])=>{
+    const row=document.createElement("div");row.className="need";
+    row.innerHTML=`<div class="nl">${label}${hint?`<span class="hint">${hint}</span>`:""}</div>
+      <textarea rows="1"></textarea>`;
+    const ta=row.querySelector("textarea");
+    ta.value=store[k]||"";
+    ta.oninput=()=>{store[k]=ta.value;save();};
+    el.appendChild(row);
+  });
+}
+/* money questions */
+function buildMoney(){
+  const el=document.getElementById("money");el.innerHTML="";
+  MONEY.forEach((q,i)=>{
+    const wrap=document.createElement("div");wrap.className="rq";
+    wrap.innerHTML=`<label><span class="num">${i+1}.</span>${q}</label><textarea></textarea>`;
+    const ta=wrap.querySelector("textarea");
+    ta.value=state.money["m"+i]||"";
+    ta.oninput=()=>{state.money["m"+i]=ta.value;save();};
+    el.appendChild(wrap);
+  });
+}
+/* free fields (offset + insights) */
+function bindFields(){
+  document.querySelectorAll('[data-field]').forEach(ta=>{
+    ta.value=state.fields[ta.dataset.field]||"";
+    ta.oninput=()=>{state.fields[ta.dataset.field]=ta.value;save();};
+  });
+}
+function renderAll(){
+  syncIdentity();
+  buildNeeds("needsInitial",state.initial);
+  buildNeeds("needsFinal",state.final);
+  buildMoney();
+  bindFields();
+}
+
+/* export / import / reset */
+document.getElementById("exportBtn").onclick=()=>{
+  const blob=new Blob([JSON.stringify(state,null,2)],{type:"application/json"});
+  const a=document.createElement("a");a.href=URL.createObjectURL(blob);
+  a.download="true-needs-"+new Date().toISOString().slice(0,10)+".json";a.click();URL.revokeObjectURL(a.href);
+};
+document.getElementById("importBtn").onclick=()=>document.getElementById("importFile").click();
+document.getElementById("importFile").onchange=(e)=>{
+  const f=e.target.files[0];if(!f)return;const r=new FileReader();
+  r.onload=()=>{try{localStorage.setItem(KEY,r.result);state=load();renderAll();}
+    catch(err){alert("Could not read that file.");}};
+  r.readAsText(f);e.target.value="";
+};
+document.getElementById("resetBtn").onclick=()=>{
+  if(confirm("Clear everything and start again? This can't be undone.")){state=blank();save();renderAll();}
+};
+
+/* report */
+function needsTable(store){
+  let rows="";
+  NEEDS.forEach(([k,label])=>{
+    const v=escHtml((store[k]||"").trim());
+    rows+=`<tr><td class="k">${label}</td><td class="v${v?"":" empty"}">${v?v.replace(/\n/g,"<br>"):"—"}</td></tr>`;
+  });
+  return `<table>${rows}</table>`;
+}
+function buildReport(){
+  const r=document.getElementById("report");
+  const nm=escHtml((state.person.name||"").trim()),em=escHtml((state.person.email||"").trim());
+  const date=new Date().toLocaleDateString(undefined,{year:"numeric",month:"long",day:"numeric"});
+
+  let h=`<p class="rpt-title">Assessing your true needs</p>
+    <p class="rpt-sub">Career jigsaw · needs assessment</p>
+    ${(nm||em)?`<p class="rpt-person">${nm||"(name not given)"}${em?` · ${em}`:""}</p>`:""}
+    <div class="rpt-meta"><span>Generated <b>${date}</b></span></div>
+    <hr>`;
+
+  h+=`<h2><span class="n">1.</span> Initial sense of your needs</h2>${needsTable(state.initial)}`;
+
+  h+=`<h2><span class="n">2.</span> The money story</h2>`;
+  MONEY.forEach((q,i)=>{
+    const a=escHtml((state.money["m"+i]||"").trim());
+    h+=`<div class="qa"><p class="q">${i+1}. ${escHtml(q)}</p>`+(a?`<p class="a">${a}</p>`:`<p class="a empty">Not answered</p>`)+`</div>`;
+  });
+  const off=escHtml((state.fields["offset"]||"").trim());
+  h+=`<div class="qa"><p class="q">Could you offset any of these needs?</p>`+(off?`<p class="a">${off}</p>`:`<p class="a empty">Not answered</p>`)+`</div>`;
+
+  h+=`<h2><span class="n">3.</span> Final needs assessment</h2>${needsTable(state.final)}`;
+
+  h+=`<h2><span class="n">4.</span> Top 3 insights</h2>`;
+  [1,2,3].forEach(n=>{
+    const a=escHtml((state.fields["insight"+n]||"").trim());
+    h+=`<div class="qa"><p class="q">Insight ${n}</p>`+(a?`<p class="a">${a}</p>`:`<p class="a empty">Not answered</p>`)+`</div>`;
+  });
+
+  h+=`<p class="rpt-foot">Assessing your true needs · report generated from your own responses.</p>`;
+  r.innerHTML=h;
+}
+function reportFilename(){
+  const raw=(state.person.name||"").trim();
+  const safe=raw?raw.replace(/[^\w\s-]/g,"").trim().replace(/\s+/g,"_"):"";
+  return (safe||"needs")+"_true_needs_report";
+}
+const BASE_TITLE=document.title;
+document.getElementById("printBtn").onclick=()=>{buildReport();document.title=reportFilename();window.print();};
+window.addEventListener("beforeprint",()=>{buildReport();document.title=reportFilename();});
+window.addEventListener("afterprint",()=>{document.title=BASE_TITLE;});
+
+/* init */
+renderAll();
+</script>
+</body>
+</html>

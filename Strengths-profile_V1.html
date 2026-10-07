@@ -1,0 +1,603 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Discover Your Strengths</title>
+<style>
+  :root{
+    --bg:#e9ebee;--panel:#ffffff;--ink:#1c2230;--muted:#69707d;
+    --line:#d8dce2;--line-strong:#c4cad3;
+    --accent:#5a4b9c;--accent-soft:#ece9f6;
+    --energize:#0f7a67;--energize-soft:#e4f1ee;
+    --neutral:#8a93a2;--neutral-soft:#eef0f3;
+    --drain:#b5564e;--drain-soft:#f6e9e8;
+    --shadow:0 1px 2px rgba(20,30,50,.06),0 4px 14px rgba(20,30,50,.06);
+    --radius:10px;
+    --sans:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    --serif:"Iowan Old Style","Palatino Linotype",Palatino,Georgia,"Times New Roman",serif;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0}
+  body{font-family:var(--sans);color:var(--ink);background:var(--bg);line-height:1.45;-webkit-font-smoothing:antialiased}
+  .wrap{max-width:1000px;margin:0 auto;padding:22px 18px 90px}
+
+  header.top{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:14px;margin-bottom:12px}
+  .title-block .eyebrow{font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);margin:0 0 4px}
+  .title-block h1{font-family:var(--serif);font-weight:600;font-size:29px;line-height:1.1;margin:0}
+  .toolbar{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+  .btn{font:inherit;font-size:13px;border:1px solid var(--line-strong);background:var(--panel);color:var(--ink);padding:7px 12px;border-radius:8px;cursor:pointer;white-space:nowrap}
+  .btn:hover{border-color:#9aa2ae}
+  .btn.danger:hover{border-color:#c9524a;color:#b4433c}
+  .save-dot{font-size:12px;color:var(--muted);display:inline-flex;align-items:center;gap:6px}
+  .save-dot b{width:7px;height:7px;border-radius:50%;background:var(--accent);display:inline-block}
+
+  details.guide{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);margin:12px 0;box-shadow:var(--shadow)}
+  details.guide>summary{cursor:pointer;padding:12px 16px;font-weight:600;font-size:13.5px;list-style:none;color:#2a3140}
+  details.guide>summary::-webkit-details-marker{display:none}
+  details.guide>summary::before{content:"›";display:inline-block;margin-right:8px;transition:transform .15s;color:var(--muted)}
+  details.guide[open]>summary::before{transform:rotate(90deg)}
+  .guide-body{padding:0 16px 14px;font-size:13px;color:#3a414f}
+  .guide-body p{margin:8px 0}.guide-body ul{margin:8px 0;padding-left:20px}.guide-body li{margin:4px 0}
+  .guide-body .quote{font-style:italic;color:#2a3140;border-left:3px solid var(--accent);padding-left:12px;margin:10px 0}
+  .scale-row{display:flex;gap:10px;flex-wrap:wrap;margin-top:8px}
+  .scale-pill{font-size:12px;padding:6px 10px;border-radius:8px;border:1px solid var(--line)}
+  .scale-pill.e{background:var(--energize-soft);border-color:#bcdcd4}
+  .scale-pill.n{background:var(--neutral-soft)}
+  .scale-pill.d{background:var(--drain-soft);border-color:#e6c6c3}
+
+  .identity{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);padding:14px 16px;margin-bottom:16px;display:grid;grid-template-columns:1fr 1fr;gap:14px}
+  @media(max-width:620px){.identity{grid-template-columns:1fr}}
+  .identity .field label{display:block;font-size:11px;letter-spacing:.04em;text-transform:uppercase;color:var(--muted);margin-bottom:5px}
+  .identity .field input{width:100%;font:inherit;font-size:14px;padding:9px 12px;border:1px solid var(--line-strong);border-radius:8px;background:#fff}
+  .identity-note{grid-column:1/-1;margin:0;font-size:12px;color:var(--muted)}
+
+  h2.sec{font-family:var(--serif);font-weight:600;font-size:21px;margin:26px 0 3px}
+  p.sec-sub{color:var(--muted);font-size:13px;margin:0 0 6px}
+  .bar{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin:8px 0 14px}
+  .chip{font-size:12px;padding:5px 10px;border-radius:999px;border:1px solid var(--line);background:var(--panel);color:var(--muted)}
+  .chip b{color:var(--ink)}
+
+  /* strength rating rows */
+  .srow{background:var(--panel);border:1px solid var(--line);border-radius:10px;box-shadow:var(--shadow);padding:11px 13px;margin-bottom:9px;display:grid;grid-template-columns:1fr auto;gap:10px 14px;align-items:center}
+  @media(max-width:620px){.srow{grid-template-columns:1fr}}
+  .srow .s-main{min-width:0}
+  .srow .s-name{font-weight:600;font-size:14.5px}
+  .srow .s-name .n{color:var(--accent);font-variant-numeric:tabular-nums;margin-right:7px;font-size:12.5px}
+  .srow .s-def{font-size:12.5px;color:#4a515e;margin-top:3px}
+  .srow.rated-5{border-left:3px solid var(--energize)}
+  .srow.rated-3{border-left:3px solid var(--neutral)}
+  .srow.rated-1{border-left:3px solid var(--drain)}
+
+  .seg{display:inline-flex;border:1px solid var(--line-strong);border-radius:8px;overflow:hidden;flex:none}
+  .seg button{font:inherit;font-size:12px;padding:7px 11px;border:none;background:#fff;color:var(--muted);cursor:pointer;border-left:1px solid var(--line);white-space:nowrap}
+  .seg button:first-child{border-left:none}
+  .seg button .num{font-weight:700;font-variant-numeric:tabular-nums}
+  .seg button.on[data-v="5"]{background:var(--energize);color:#fff}
+  .seg button.on[data-v="3"]{background:var(--neutral);color:#fff}
+  .seg button.on[data-v="1"]{background:var(--drain);color:#fff}
+
+  /* profile */
+  .profile-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+  @media(max-width:720px){.profile-grid{grid-template-columns:1fr}}
+  .cluster{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);padding:14px 15px}
+  .cluster h3{margin:0 0 2px;font-size:15px;font-family:var(--serif);font-weight:600}
+  .cluster .cdesc{font-size:11.5px;color:var(--muted);margin:0 0 10px;line-height:1.4}
+  .cluster .citem{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:5px 0;border-top:1px solid #eef0f2;font-size:13px}
+  .cluster .citem:first-of-type{border-top:none}
+  .cluster .citem .nm{min-width:0}
+  .badge{font-size:11px;font-weight:700;width:24px;height:22px;border-radius:6px;display:inline-flex;align-items:center;justify-content:center;flex:none;background:var(--neutral-soft);color:var(--muted)}
+  .badge.b5{background:var(--energize-soft);color:var(--energize)}
+  .badge.b3{background:var(--neutral-soft);color:#5c6471}
+  .badge.b1{background:var(--drain-soft);color:var(--drain)}
+  .badge.b0{background:#f4f5f7;color:#b6bcc6}
+  .cluster .csum{font-size:11.5px;color:var(--muted);margin-top:9px;padding-top:9px;border-top:1px solid #eef0f2}
+  .cluster .csum b{color:var(--energize)}
+
+  /* reflect */
+  section.block{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);margin-top:20px;padding:18px}
+  section.block h2{font-family:var(--serif);font-weight:600;font-size:20px;margin:0 0 3px}
+  section.block .sub{color:var(--muted);font-size:13px;margin:0 0 12px}
+  .suggest{font-size:12.5px;color:var(--muted);margin:0 0 7px}
+  .sugg-chips{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:10px}
+  .sugg{font:inherit;font-size:12px;border:1px dashed var(--line-strong);background:#fff;color:var(--ink);padding:5px 10px;border-radius:999px;cursor:pointer}
+  .sugg:hover{border-color:var(--accent);background:var(--accent-soft)}
+  .sugg.energize{border-color:#bcdcd4}
+  .sugg.drain{border-color:#e6c6c3}
+  .add-sel{font:inherit;font-size:13px;padding:7px 10px;border:1px solid var(--line-strong);border-radius:8px;background:#fff;margin-bottom:12px;max-width:320px;width:100%}
+
+  .ritem{border:1px solid var(--line);border-radius:10px;padding:12px;margin-bottom:10px;background:#fff}
+  .ritem-head{display:flex;align-items:flex-start;gap:10px}
+  .ritem-head .rn{font-weight:600;font-size:14.5px}
+  .ritem-head .rd{font-size:12.5px;color:#4a515e;margin-top:2px}
+  .ritem-head .rm{margin-left:auto;border:1px solid var(--line);background:#fff;border-radius:6px;width:26px;height:26px;cursor:pointer;color:var(--muted);flex:none}
+  .ritem-head .rm:hover{border-color:#c9524a;color:#b4433c}
+  .ritem .ruse{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin:11px 0 10px}
+  .ritem .ruse .ul{font-size:12px;font-weight:600;color:#2a3140}
+  .ritem textarea{width:100%;font:inherit;font-size:13.5px;padding:9px 11px;border:1px solid var(--line-strong);border-radius:8px;resize:vertical;min-height:52px;background:#fff;line-height:1.5}
+  .ritem textarea:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 2px var(--accent-soft)}
+  .r-empty{color:var(--muted);font-size:13px;border:1px dashed var(--line);border-radius:8px;padding:14px;text-align:center}
+
+  .rq{margin-bottom:14px}.rq:last-child{margin-bottom:0}
+  .rq label{display:block;font-size:13.5px;font-weight:600;margin-bottom:6px;color:#2a3140}
+  .rq label .num{color:var(--accent);margin-right:4px}
+  .rq textarea{width:100%;font:inherit;font-size:13.5px;padding:9px 11px;border:1px solid var(--line-strong);border-radius:8px;resize:vertical;min-height:60px;background:#fff;line-height:1.5}
+  .rq textarea:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 2px var(--accent-soft)}
+
+  footer{margin-top:26px;color:var(--muted);font-size:12px;text-align:center}
+
+  /* ---------- printable report ---------- */
+  #report{display:none}
+  @media print{
+    @page{margin:16mm 15mm}
+    html,body{background:#fff}
+    .wrap{display:none!important}
+    #report{display:block!important;color:#15171c;font-family:var(--serif);font-size:10.5pt;line-height:1.5}
+    #report .rpt-title{font-size:22pt;font-weight:600;margin:0 0 2px}
+    #report .rpt-sub{font-family:var(--sans);font-size:9.5pt;color:#555;margin:0}
+    #report .rpt-person{font-family:var(--sans);font-size:11pt;color:#15171c;font-weight:600;margin:8px 0 0}
+    #report .rpt-meta{font-family:var(--sans);font-size:9pt;color:#555;margin:8px 0 0}
+    #report .rpt-meta span{display:inline-block;margin-right:22px}#report .rpt-meta span b{color:#15171c}
+    #report hr{border:none;border-top:1.5px solid #15171c;margin:12px 0 16px}
+    #report h2{font-size:14pt;font-weight:600;margin:20px 0 6px;padding-bottom:5px;border-bottom:1px solid #c9ccd2;break-after:avoid}
+    #report h2 .n{color:#5a4b9c}
+    #report h3{font-family:var(--sans);font-size:10.5pt;margin:12px 0 4px;break-after:avoid}
+    #report table{width:100%;border-collapse:collapse;font-size:9.5pt;margin:4px 0 2px}
+    #report td,#report th{border:1px solid #cfd3da;padding:5px 8px;vertical-align:top;text-align:left}
+    #report th{background:#efecf6;font-family:var(--sans);font-size:8.5pt;font-weight:700}
+    #report tr{break-inside:avoid}
+    #report .rpt-note{font-family:var(--sans);font-size:9pt;color:#555;margin:2px 0 6px}
+    #report table.rate-tbl td.rk{font-size:11pt;line-height:1}
+    #report table.rate-tbl td.rk.d1{color:#b5564e}
+    #report table.rate-tbl td.rk.n3{color:#6b7280}
+    #report table.rate-tbl td.rk.e5{color:#0f7a67}
+    #report table.rate-tbl th.rh{text-align:center;width:58px}
+    #report table.rate-tbl td.c{width:auto}
+    #report table.rate-tbl td.rk{width:58px}
+    #report table.rate-tbl td.sn{width:21%}
+    #report td.sn{font-weight:600;width:24%}
+    #report td.sd{font-size:9pt;color:#39414f}
+    #report td.c{text-align:center;width:46px;font-weight:700}
+    #report td.c.e5{color:#0f7a67}#report td.c.d1{color:#b5564e}
+    #report .cl-blk{break-inside:avoid;margin-bottom:8px}
+    #report tr.avg td{font-weight:700;background:#efecf6;border-top:2px solid #b7add6}
+    #report .qa{break-inside:avoid;margin:8px 0}
+    #report .qa .q{font-family:var(--sans);font-weight:600;font-size:9pt;color:#39414f;margin:0 0 1px}
+    #report .qa .a{white-space:pre-wrap;font-size:10.5pt;margin:0}
+    #report .qa .a.empty{color:#9aa1ab;font-style:italic;font-family:var(--sans);font-size:9pt}
+    #report .rpt-foot{font-family:var(--sans);font-size:8pt;color:#888;margin-top:22px;border-top:1px solid #d8dce2;padding-top:8px}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="top">
+    <div class="title-block">
+      <p class="eyebrow">Career jigsaw · exercise</p>
+      <h1>Discover your strengths</h1>
+    </div>
+    <div class="toolbar">
+      <span class="save-dot" id="saveDot"><b></b> Saved</span>
+      <button class="btn" id="printBtn">Print / PDF</button>
+      <button class="btn" id="exportBtn">Export backup</button>
+      <button class="btn" id="importBtn">Import</button>
+      <input type="file" id="importFile" accept="application/json" hidden>
+      <button class="btn danger" id="resetBtn">Reset</button>
+    </div>
+  </header>
+
+  <details class="guide">
+    <summary>What are strengths &amp; how to rate them</summary>
+    <div class="guide-body">
+      <p class="quote">"Underlying qualities that energize us, contribute to our personal growth and lead to peak performance." — Brewerton &amp; Brook, 2006</p>
+      <p>Our area of greatest potential and growth actually lies within our areas of strength. <b>Objective:</b> understand your key strengths, understand what leaves you dissatisfied and disengaged, and gain insight on how to better leverage your strengths.</p>
+      <p>Read each of the 24 strengths and rate it by how much using it <b>energizes</b> you:</p>
+      <div class="scale-row">
+        <span class="scale-pill e"><b>5 · Energizes</b> — highly energized, motivated and satisfied</span>
+        <span class="scale-pill n"><b>3 · Neutral</b> — neither energized nor drained</span>
+        <span class="scale-pill d"><b>1 · Drains</b> — drained, weakened and dissatisfied</span>
+      </div>
+    </div>
+  </details>
+
+  <div class="identity">
+    <div class="field"><label for="pName">Name</label><input type="text" id="pName" placeholder="Full name" autocomplete="name"></div>
+    <div class="field"><label for="pEmail">Email</label><input type="email" id="pEmail" placeholder="name@example.com" autocomplete="email"></div>
+    <p class="identity-note">Used to label the report and the saved PDF filename. Everything stays on this device.</p>
+  </div>
+
+  <h2 class="sec">1 · Rate your 24 strengths</h2>
+  <p class="sec-sub">How energized do you feel when using each one?</p>
+  <div class="bar"><span class="chip" id="rateCount">0 / 24 rated</span>
+    <span class="chip">Energizes <b id="cE">0</b></span>
+    <span class="chip">Neutral <b id="cN">0</b></span>
+    <span class="chip">Drains <b id="cD">0</b></span></div>
+  <div id="rateList"></div>
+
+  <h2 class="sec">2 · Your strengths profile</h2>
+  <p class="sec-sub">Your ratings grouped into four families. This builds as you rate above.</p>
+  <div class="profile-grid" id="profile"></div>
+
+  <section class="block">
+    <h2>3 · Reflect on your strengths</h2>
+    <p class="sub">Pick up to 7 of your most significant strengths (the ones that energize you most). For each, how much opportunity do you get to <b>use</b> it, and how could you stretch it further?</p>
+    <p class="suggest" id="strSuggestLabel"></p>
+    <div class="sugg-chips" id="strSuggest"></div>
+    <select class="add-sel" id="strAdd"><option value="">+ Add a strength to reflect on…</option></select>
+    <div id="strList"></div>
+    <details class="guide" style="margin-top:12px">
+      <summary>Tips for stretching / developing a strength</summary>
+      <div class="guide-body"><ul>
+        <li>Set challenging goals that stretch you or take you outside your comfort zone.</li>
+        <li>Acquire new knowledge or skills.</li>
+        <li>Take on a new project or task that plays to the strength.</li>
+        <li>Teach, train, coach or mentor others.</li>
+        <li>Use your strengths in various combinations.</li>
+        <li>Use your strengths in new or different ways to manage obstacles and barriers.</li>
+      </ul></div>
+    </details>
+  </section>
+
+  <section class="block">
+    <h2>4 · Reflect on your weakeners</h2>
+    <p class="sub">Pick up to 7 that drain you most. For each, how much are you <b>required</b> to use it, and how could you reduce or eliminate it?</p>
+    <p class="suggest" id="weakSuggestLabel"></p>
+    <div class="sugg-chips" id="weakSuggest"></div>
+    <select class="add-sel" id="weakAdd"><option value="">+ Add a weakener to reflect on…</option></select>
+    <div id="weakList"></div>
+    <details class="guide" style="margin-top:12px">
+      <summary>Tips for reducing / eliminating a weakener</summary>
+      <div class="guide-body"><ul>
+        <li>Use your strengths to compensate.</li>
+        <li>Use other people's strengths to compensate.</li>
+        <li>Develop new behaviours with the outcome in mind.</li>
+        <li>Use your strengths in new or different ways to manage obstacles and barriers.</li>
+      </ul></div>
+    </details>
+  </section>
+
+  <section class="block">
+    <h2>5 · Insights</h2>
+    <p class="sub">Draw your learning from the exercise.</p>
+    <div id="insights"></div>
+  </section>
+
+  <footer>Discover your strengths · inspired by Strengthscope · answers stay on this device.</footer>
+</div>
+
+<div id="report"></div>
+
+<script>
+/* 24 strengths: id, number, name, definition, clusters[] */
+const STRENGTHS=[
+  ["collaboration",1,"Collaboration","You work cooperatively with others to overcome conflict and build towards a common goal.",["relational"]],
+  ["compassion",2,"Compassion","You demonstrate a deep and genuine concern for the well-being and welfare of others.",["relational"]],
+  ["developing-others",3,"Developing others","You promote other people's learning and development to help them achieve their goals and fulfil their potential.",["relational"]],
+  ["empathy",4,"Empathy","You readily identify with other people's situations and can see things clearly from their perspective.",["relational"]],
+  ["leading",5,"Leading","You take responsibility for influencing and motivating others to contribute to the goals and success of their team and organization.",["relational"]],
+  ["persuasiveness",6,"Persuasiveness","You are able to win agreement and support for a position or desired outcome.",["relational"]],
+  ["relationship-building",7,"Relationship building","You take steps to build networks of contacts and act as a 'hub' between people that you know.",["relational"]],
+  ["decisiveness",8,"Decisiveness","You make quick, confident, and clear decisions, even when faced with limited information.",["execution"]],
+  ["efficiency",9,"Efficiency","You take a well-ordered and methodical approach to tasks to achieve planned outcomes.",["execution"]],
+  ["flexibility",10,"Flexibility","You remain adaptable and flexible in the face of unfamiliar or changing situations.",["execution"]],
+  ["initiative",11,"Initiative","You take independent action to make things happen and achieve goals.",["execution"]],
+  ["results-focus",12,"Results focus","You maintain a strong sense of focus on results, driving tasks and projects to completion.",["execution"]],
+  ["self-improvement",13,"Self-improvement","You draw on a wide range of people and resources in the pursuit of self-development and learning.",["thinking","execution"]],
+  ["common-sense",14,"Common sense","You make pragmatic judgments based on practical thinking and previous experience.",["thinking"]],
+  ["creativity",15,"Creativity","You come up with new ideas and original solutions to move things forward.",["thinking"]],
+  ["critical-thinking",16,"Critical thinking","You approach problems and arguments by breaking them down systematically and evaluating them objectively.",["thinking"]],
+  ["detail-orientation",17,"Detail orientation","You pay attention to detail in order to produce high quality output, no matter what the pressures.",["thinking"]],
+  ["strategic-mindedness",18,"Strategic mindedness","You focus on the future and take a strategic perspective on issues and challenges.",["thinking"]],
+  ["courage",19,"Courage","You take on challenges and face risks by standing up for what you believe.",["emotional"]],
+  ["emotional-control",20,"Emotional control","You are aware of your emotional 'triggers' and how to control these to ensure you remain calm and productive.",["emotional"]],
+  ["enthusiasm",21,"Enthusiasm","You demonstrate passion and energy when communicating goals, beliefs, interests or ideas you feel strongly about.",["emotional"]],
+  ["optimism",22,"Optimism","You remain positive and upbeat about the future and your ability to influence it to your advantage.",["emotional"]],
+  ["resilience",23,"Resilience","You deal effectively with setbacks and enjoy overcoming difficult challenges.",["emotional"]],
+  ["self-confidence",24,"Self-confidence","You have a strong belief in yourself and your abilities to accomplish tasks and goals.",["emotional"]]
+].map(([id,num,name,def,clusters])=>({id,num,name,def,clusters}));
+
+const CLUSTERS=[
+  ["emotional","Emotional","How you make sense of and use emotions in the way you perform."],
+  ["relational","Relational","Establishing and maintaining productive relationships for personal satisfaction and achieving work goals."],
+  ["thinking","Thinking","Areas in which you apply intellect and how you gather and use information to make decisions."],
+  ["execution","Execution","Delivering results, including what is delivered and how it is delivered."]
+];
+const INSIGHTS=[
+  "What were your key learnings from this exercise?",
+  "How can you ensure that your strengths don't go into overdrive?",
+  "How can you harness and utilize your strengths in your career reinvention?",
+  "How can you ensure that your weakeners don't derail your career reinvention?",
+  "What are the 3 key things you will take from this exercise?"
+];
+const byId=id=>STRENGTHS.find(s=>s.id===id);
+const KEY="discoverStrengths.v1";
+
+function blank(){
+  const r={};STRENGTHS.forEach(s=>r[s.id]=null);
+  return {person:{name:"",email:""}, ratings:r, strengths:[], weakeners:[], insights:{}};
+}
+function load(){
+  try{
+    const raw=localStorage.getItem(KEY);if(!raw)return blank();
+    const s=JSON.parse(raw),b=blank();
+    b.person.name=(s.person&&s.person.name)||"";b.person.email=(s.person&&s.person.email)||"";
+    if(s.ratings)STRENGTHS.forEach(x=>{if([1,3,5].includes(s.ratings[x.id]))b.ratings[x.id]=s.ratings[x.id];});
+    const clean=(arr,textKey)=>Array.isArray(arr)?arr.filter(it=>byId(it.id)).slice(0,7).map(it=>({id:it.id,use:[1,3,5].includes(it.use)?it.use:null,[textKey]:it[textKey]||""})):[];
+    b.strengths=clean(s.strengths,"develop");
+    b.weakeners=clean(s.weakeners,"reduce");
+    b.insights=s.insights||{};
+    return b;
+  }catch(e){return blank();}
+}
+let state=load();
+
+let saveTimer;
+function save(){clearTimeout(saveTimer);const d=document.getElementById("saveDot");d.style.opacity=".4";
+  saveTimer=setTimeout(()=>{localStorage.setItem(KEY,JSON.stringify(state));d.style.opacity="1";},250);}
+function escHtml(s){return (s||"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");}
+
+/* identity */
+const pName=document.getElementById("pName"),pEmail=document.getElementById("pEmail");
+function syncIdentity(){pName.value=state.person.name||"";pEmail.value=state.person.email||"";}
+pName.oninput=()=>{state.person.name=pName.value;save();};
+pEmail.oninput=()=>{state.person.email=pEmail.value;save();};
+
+/* segmented 1/3/5 selector */
+function seg(current,onPick){
+  const el=document.createElement("div");el.className="seg";
+  [["1","Drains"],["3","Neutral"],["5","Energizes"]].forEach(([v,lbl])=>{
+    const b=document.createElement("button");b.dataset.v=v;
+    b.innerHTML=`${lbl} <span class="num">${v}</span>`;
+    if(current===+v)b.classList.add("on");
+    b.onclick=()=>onPick(current===+v?null:+v);
+    el.appendChild(b);
+  });
+  return el;
+}
+function segUse(current,onPick){ // same control, labels tuned for "use"
+  const el=document.createElement("div");el.className="seg";
+  [["1","Rarely"],["3","Sometimes"],["5","Widely"]].forEach(([v,lbl])=>{
+    const b=document.createElement("button");b.dataset.v=v;
+    b.innerHTML=`${lbl} <span class="num">${v}</span>`;
+    if(current===+v)b.classList.add("on");
+    b.onclick=()=>onPick(current===+v?null:+v);
+    el.appendChild(b);
+  });
+  return el;
+}
+
+/* section 1: rating list */
+const rateList=document.getElementById("rateList");
+function renderRateList(){
+  rateList.innerHTML="";
+  STRENGTHS.forEach(s=>{
+    const rv=state.ratings[s.id];
+    const row=document.createElement("div");
+    row.className="srow"+(rv?(" rated-"+rv):"");
+    const main=document.createElement("div");main.className="s-main";
+    main.innerHTML=`<div class="s-name"><span class="n">${s.num}</span>${s.name}</div><div class="s-def">${s.def}</div>`;
+    const control=seg(rv,(v)=>{state.ratings[s.id]=v;save();renderRateList();renderProfile();renderCounts();renderSuggest();});
+    row.appendChild(main);row.appendChild(control);
+    rateList.appendChild(row);
+  });
+}
+function renderCounts(){
+  let e=0,n=0,d=0,tot=0;
+  STRENGTHS.forEach(s=>{const v=state.ratings[s.id];if(v){tot++;if(v===5)e++;else if(v===3)n++;else d++;}});
+  document.getElementById("rateCount").textContent=tot+" / 24 rated";
+  document.getElementById("cE").textContent=e;document.getElementById("cN").textContent=n;document.getElementById("cD").textContent=d;
+}
+
+/* section 2: profile */
+const profileEl=document.getElementById("profile");
+function renderProfile(){
+  profileEl.innerHTML="";
+  CLUSTERS.forEach(([cid,cname,cdesc])=>{
+    const members=STRENGTHS.filter(s=>s.clusters.includes(cid));
+    const card=document.createElement("div");card.className="cluster";
+    let rows="";let energ=0,sum=0,cnt=0;
+    members.forEach(s=>{
+      const v=state.ratings[s.id];
+      if(v===5)energ++;
+      if(v){sum+=v;cnt++;}
+      const cls=v===5?"b5":v===3?"b3":v===1?"b1":"b0";
+      const also=s.clusters.length>1?' <span style="color:#b6bcc6;font-size:11px">(shared)</span>':"";
+      rows+=`<div class="citem"><span class="nm">${s.name}${also}</span><span class="badge ${cls}">${v||"–"}</span></div>`;
+    });
+    const avg=cnt?(sum/cnt).toFixed(1):"–";
+    card.innerHTML=`<h3>${cname}</h3><p class="cdesc">${cdesc}</p>${rows}
+      <div class="csum">Average energy <b>${avg}</b>${cnt?` · ${cnt}/${members.length} rated`:""} · <b>${energ}</b> energizer${energ===1?"":"s"}</div>`;
+    profileEl.appendChild(card);
+  });
+}
+
+/* sections 3 & 4: reflections */
+function renderReflect(kind){
+  const isStr=kind==="strengths";
+  const list=isStr?state.strengths:state.weakeners;
+  const textKey=isStr?"develop":"reduce";
+  const listEl=document.getElementById(isStr?"strList":"weakList");
+  listEl.innerHTML="";
+  if(list.length===0){
+    const e=document.createElement("div");e.className="r-empty";
+    e.textContent=isStr?"No strengths added yet. Use the suggestions or dropdown above.":"No weakeners added yet. Use the suggestions or dropdown above.";
+    listEl.appendChild(e);
+  }
+  list.forEach(it=>{
+    const s=byId(it.id);
+    const item=document.createElement("div");item.className="ritem";
+    const head=document.createElement("div");head.className="ritem-head";
+    head.innerHTML=`<div><div class="rn">${s.name}</div><div class="rd">${s.def}</div></div>`;
+    const rm=document.createElement("button");rm.className="rm";rm.textContent="✕";rm.title="Remove";
+    rm.onclick=()=>{const arr=isStr?state.strengths:state.weakeners;const i=arr.findIndex(x=>x.id===it.id);if(i>=0)arr.splice(i,1);save();renderReflect(kind);renderSuggest();};
+    head.appendChild(rm);
+    item.appendChild(head);
+
+    const useWrap=document.createElement("div");useWrap.className="ruse";
+    const ul=document.createElement("span");ul.className="ul";
+    ul.textContent=isStr?"Opportunity to use it:":"Required to use it:";
+    useWrap.appendChild(ul);
+    useWrap.appendChild(segUse(it.use,(v)=>{it.use=v;save();renderReflect(kind);}));
+    item.appendChild(useWrap);
+
+    const ta=document.createElement("textarea");
+    ta.placeholder=isStr?"How could I develop or stretch this strength further?":"How could I reduce or eliminate this weakener?";
+    ta.value=it[textKey]||"";
+    ta.oninput=()=>{it[textKey]=ta.value;save();};
+    item.appendChild(ta);
+    listEl.appendChild(item);
+  });
+}
+function renderSuggest(){
+  [["strengths",5,"strSuggest","strSuggestLabel","strAdd","energize","state.strengths"],
+   ["weakeners",1,"weakSuggest","weakSuggestLabel","weakAdd","drain","state.weakeners"]].forEach(cfg=>{
+    const [kind,ratingVal,chipsId,lblId,selId,chipCls]=cfg;
+    const isStr=kind==="strengths";
+    const list=isStr?state.strengths:state.weakeners;
+    const inList=id=>list.some(x=>x.id===id);
+    const suggestions=STRENGTHS.filter(s=>state.ratings[s.id]===ratingVal&&!inList(s.id));
+    const chips=document.getElementById(chipsId);chips.innerHTML="";
+    const lbl=document.getElementById(lblId);
+    if(suggestions.length){
+      lbl.textContent=isStr?"Your energizers (rated 5) — tap to add:":"Your drainers (rated 1) — tap to add:";
+      suggestions.forEach(s=>{
+        const b=document.createElement("button");b.className="sugg "+chipCls;b.textContent=s.name;
+        b.onclick=()=>addReflect(kind,s.id);chips.appendChild(b);
+      });
+    }else{
+      lbl.textContent=list.length>=7?"List is full (7).":(isStr?"Rate strengths 5 above to see suggestions here.":"Rate strengths 1 above to see suggestions here.");
+    }
+    // populate select with strengths not already in list
+    const sel=document.getElementById(selId);
+    const keep=sel.value;sel.innerHTML=`<option value="">${isStr?"+ Add a strength to reflect on…":"+ Add a weakener to reflect on…"}</option>`;
+    STRENGTHS.forEach(s=>{if(!inList(s.id)){const o=document.createElement("option");o.value=s.id;o.textContent=s.name;sel.appendChild(o);}});
+    sel.value="";
+  });
+}
+function addReflect(kind,id){
+  const isStr=kind==="strengths";const arr=isStr?state.strengths:state.weakeners;
+  if(arr.some(x=>x.id===id))return;
+  if(arr.length>=7){alert("You can reflect on up to 7. Remove one first.");return;}
+  arr.push(isStr?{id,use:null,develop:""}:{id,use:null,reduce:""});
+  save();renderReflect(kind);renderSuggest();
+}
+document.getElementById("strAdd").onchange=(e)=>{if(e.target.value)addReflect("strengths",e.target.value);};
+document.getElementById("weakAdd").onchange=(e)=>{if(e.target.value)addReflect("weakeners",e.target.value);};
+
+/* section 5: insights */
+const insEl=document.getElementById("insights");
+function buildInsights(){
+  insEl.innerHTML="";
+  INSIGHTS.forEach((q,i)=>{
+    const wrap=document.createElement("div");wrap.className="rq";
+    wrap.innerHTML=`<label><span class="num">${i+1}.</span>${q}</label><textarea></textarea>`;
+    const ta=wrap.querySelector("textarea");ta.value=state.insights["q"+i]||"";
+    ta.oninput=()=>{state.insights["q"+i]=ta.value;save();};
+    insEl.appendChild(wrap);
+  });
+}
+
+/* export / import / reset */
+document.getElementById("exportBtn").onclick=()=>{
+  const blob=new Blob([JSON.stringify(state,null,2)],{type:"application/json"});
+  const a=document.createElement("a");a.href=URL.createObjectURL(blob);
+  a.download="discover-strengths-"+new Date().toISOString().slice(0,10)+".json";a.click();URL.revokeObjectURL(a.href);
+};
+document.getElementById("importBtn").onclick=()=>document.getElementById("importFile").click();
+document.getElementById("importFile").onchange=(e)=>{
+  const f=e.target.files[0];if(!f)return;const r=new FileReader();
+  r.onload=()=>{try{localStorage.setItem(KEY,r.result);state=load();renderAll();}catch(err){alert("Could not read that file.");}};
+  r.readAsText(f);e.target.value="";
+};
+document.getElementById("resetBtn").onclick=()=>{
+  if(confirm("Clear all ratings, reflections and notes? This can't be undone.")){state=blank();save();renderAll();}
+};
+
+/* report */
+function buildReport(){
+  const r=document.getElementById("report");
+  const nm=escHtml((state.person.name||"").trim()),em=escHtml((state.person.email||"").trim());
+  const date=new Date().toLocaleDateString(undefined,{year:"numeric",month:"long",day:"numeric"});
+  let e=0,n=0,d=0,tot=0;STRENGTHS.forEach(s=>{const v=state.ratings[s.id];if(v){tot++;if(v===5)e++;else if(v===3)n++;else d++;}});
+
+  let h=`<p class="rpt-title">Discover your strengths</p>
+    <p class="rpt-sub">Strengths profile · inspired by Strengthscope</p>
+    ${(nm||em)?`<p class="rpt-person">${nm||"(name not given)"}${em?` · ${em}`:""}</p>`:""}
+    <div class="rpt-meta"><span>Generated <b>${date}</b></span><span>Rated <b>${tot}</b>/24</span><span>Energizers <b>${e}</b></span><span>Drainers <b>${d}</b></span></div>
+    <hr>`;
+
+  // section 1: rate your 24 strengths (all strengths + selection)
+  h+=`<h2><span class="n">A.</span> Rate your 24 strengths</h2>
+    <p class="rpt-note">How energized do you feel when using each one?</p>
+    <table class="rate-tbl"><tr><th style="width:26px">#</th><th style="width:21%">Strength</th><th>Description</th><th class="rh">Drains<br>1</th><th class="rh">Neutral<br>3</th><th class="rh">Energizes<br>5</th></tr>`;
+  STRENGTHS.forEach(s=>{
+    const v=state.ratings[s.id];
+    const mark=(n,c)=>`<td class="c rk${v===n?" "+c:""}">${v===n?"●":""}</td>`;
+    h+=`<tr><td class="c">${s.num}</td><td class="sn">${s.name}</td><td class="sd">${escHtml(s.def)}</td>${mark(1,"d1")}${mark(3,"n3")}${mark(5,"e5")}</tr>`;
+  });
+  h+=`</table>
+    <p class="rpt-note">Rated ${tot} of 24 · Energizes ${e} · Neutral ${n} · Drains ${d}</p>`;
+
+  // profile by cluster
+  h+=`<h2><span class="n">B.</span> Strengths profile</h2>`;
+  CLUSTERS.forEach(([cid,cname,cdesc])=>{
+    const members=STRENGTHS.filter(s=>s.clusters.includes(cid));
+    let rows="";let sum=0,cnt=0;
+    members.forEach(s=>{
+      const v=state.ratings[s.id];
+      if(v){sum+=v;cnt++;}
+      const cls=v===5?"c e5":v===1?"c d1":"c";
+      rows+=`<tr><td class="sn">${s.name}</td><td class="sd">${escHtml(s.def)}</td><td class="${cls}">${v||"–"}</td></tr>`;
+    });
+    const avg=cnt?(sum/cnt).toFixed(1):"–";
+    rows+=`<tr class="avg"><td colspan="2">Average energy${cnt?` (of ${cnt} rated)`:""}</td><td class="c">${avg}</td></tr>`;
+    h+=`<div class="cl-blk"><h3>${cname} — <span style="font-weight:400;color:#666">${escHtml(cdesc)}</span></h3>
+      <table><tr><th style="width:24%">Strength</th><th>Description</th><th style="width:70px">Energy</th></tr>${rows}</table></div>`;
+  });
+
+  // reflect strengths
+  h+=`<h2><span class="n">C.</span> Reflection — building on your strengths</h2>`;
+  if(state.strengths.length){
+    h+=`<table><tr><th>Strength</th><th style="width:60px">Use</th><th>How to develop / stretch it</th></tr>`;
+    state.strengths.forEach(it=>{const s=byId(it.id);const a=escHtml((it.develop||"").trim());
+      h+=`<tr><td><b>${s.name}</b></td><td class="c">${it.use||"–"}</td><td>${a?a.replace(/\n/g,"<br>"):'<span style="color:#9aa1ab;font-style:italic">—</span>'}</td></tr>`;});
+    h+=`</table>`;
+  }else h+=`<p class="qa"><span class="a empty">No strengths selected.</span></p>`;
+
+  // reflect weakeners
+  h+=`<h2><span class="n">D.</span> Reflection — reducing your weakeners</h2>`;
+  if(state.weakeners.length){
+    h+=`<table><tr><th>Weakener</th><th style="width:60px">Use</th><th>How to reduce / eliminate it</th></tr>`;
+    state.weakeners.forEach(it=>{const s=byId(it.id);const a=escHtml((it.reduce||"").trim());
+      h+=`<tr><td><b>${s.name}</b></td><td class="c">${it.use||"–"}</td><td>${a?a.replace(/\n/g,"<br>"):'<span style="color:#9aa1ab;font-style:italic">—</span>'}</td></tr>`;});
+    h+=`</table>`;
+  }else h+=`<p class="qa"><span class="a empty">No weakeners selected.</span></p>`;
+
+  // insights
+  h+=`<h2><span class="n">E.</span> Insights</h2>`;
+  INSIGHTS.forEach((q,i)=>{const a=escHtml((state.insights["q"+i]||"").trim());
+    h+=`<div class="qa"><p class="q">${i+1}. ${escHtml(q)}</p>`+(a?`<p class="a">${a}</p>`:`<p class="a empty">Not answered</p>`)+`</div>`;});
+
+  h+=`<p class="rpt-foot">Discover your strengths · report generated from your own responses.</p>`;
+  r.innerHTML=h;
+}
+function reportFilename(){
+  const raw=(state.person.name||"").trim();
+  const safe=raw?raw.replace(/[^\w\s-]/g,"").trim().replace(/\s+/g,"_"):"";
+  return (safe||"strengths")+"_strengths_report";
+}
+const BASE_TITLE=document.title;
+document.getElementById("printBtn").onclick=()=>{buildReport();document.title=reportFilename();window.print();};
+window.addEventListener("beforeprint",()=>{buildReport();document.title=reportFilename();});
+window.addEventListener("afterprint",()=>{document.title=BASE_TITLE;});
+
+/* init */
+function renderAll(){
+  syncIdentity();renderRateList();renderCounts();renderProfile();
+  renderReflect("strengths");renderReflect("weakeners");renderSuggest();buildInsights();
+}
+renderAll();
+</script>
+</body>
+</html>
